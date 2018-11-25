@@ -1,0 +1,55 @@
+	.data
+	.string	.int_wformat, "%d\12"
+	.string	.float_wformat, "%f\12"
+	.string	.char_wformat, "%c\12"
+	.string	.string_wformat, "%s\12"
+	.string	.int_rformat, "%d"
+	.string	.float_rformat, "%f"
+	.string	.char_rformat, "%c"
+	.string	.string_rformat, "%s"
+	.float	.float_const_0, 1.1
+	.float	.float_const_1, 2.2
+	.float	.float_const_2, 3.3
+	.float	.float_const_3, 4.4
+	.text
+	.frame	main, 0
+	loadI	.float_const_0  => %vr13
+	fload	%vr13  => %vr14
+	f2f	%vr14  => %vr4
+	loadI	.float_const_1  => %vr15
+	fload	%vr15  => %vr16
+	f2f	%vr16  => %vr5
+	loadI	.float_const_2  => %vr17
+	fload	%vr17  => %vr18
+	f2f	%vr18  => %vr6
+	loadI	.float_const_3  => %vr19
+	fload	%vr19  => %vr20
+	f2f	%vr20  => %vr7
+	fadd	%vr6, %vr7 => %vr21
+	fadd	%vr5, %vr21 => %vr22
+	fadd	%vr4, %vr22 => %vr23
+	fwrite	%vr23
+	loadI	1  => %vr24
+	i2i	%vr24  => %vr8
+	loadI	2  => %vr25
+	i2i	%vr25  => %vr9
+	loadI	3  => %vr26
+	i2i	%vr26  => %vr10
+	loadI	4  => %vr27
+	i2i	%vr27  => %vr11
+	mult	%vr10, %vr11 => %vr28
+	add	%vr9, %vr28 => %vr29
+	add	%vr8, %vr29 => %vr30
+	i2f	%vr30  => %vr31
+	fadd	%vr6, %vr7 => %vr21
+	fadd	%vr5, %vr21 => %vr22
+	fadd	%vr4, %vr22 => %vr23
+	fadd	%vr31, %vr23 => %vr32
+	fwrite	%vr32
+	f2i	%vr4  => %vr33
+	f2i	%vr5  => %vr34
+	comp	%vr33, %vr34 => %vr35
+	testlt	%vr35  => %vr36
+	i2i	%vr36  => %vr12
+	iwrite	%vr12
+	ret

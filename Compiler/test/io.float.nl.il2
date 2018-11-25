@@ -1,0 +1,27 @@
+	.data
+	.string	.int_wformat, "%d\12"
+	.string	.float_wformat, "%f\12"
+	.string	.char_wformat, "%c\12"
+	.string	.string_wformat, "%s\12"
+	.string	.int_rformat, "%d"
+	.string	.float_rformat, "%f"
+	.string	.char_rformat, "%c"
+	.string	.string_rformat, "%s"
+	.float	.float_const_0, 1.1
+	.float	.float_const_1, 110000.0
+	.text
+	.frame	main, 4
+	loadI	-4  => %vr4
+	add	%vr0, %vr4 => %vr5
+	fread	%vr5
+	loadI	-4  => %vr4
+	add	%vr0, %vr4 => %vr5
+	fload	%vr5  => %vr6
+	fwrite	%vr6
+	loadI	.float_const_0  => %vr7
+	fload	%vr7  => %vr8
+	fwrite	%vr8
+	loadI	.float_const_1  => %vr9
+	fload	%vr9  => %vr10
+	fwrite	%vr10
+	ret

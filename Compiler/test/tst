@@ -1,0 +1,5 @@
+#!/bin/tcsh 
+rm $1.il
+nlc -int $1.nl > $1.il
+echo "**** Differences ****"
+diff $1.il /classes/cs5131/common/test/iloc/$1.il

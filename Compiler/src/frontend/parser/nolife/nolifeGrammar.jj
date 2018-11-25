@@ -1,0 +1,1217 @@
+/**
+ * JavaCC file
+ */
+ 
+options {
+  JDK_VERSION = "1.8";
+}
+PARSER_BEGIN(NolifeParser)
+package frontend.parser.nolife;
+
+import java.util.Vector;
+import frontend.ast.*;
+import frontend.utils.*;
+
+public class NolifeParser {
+  private static ASTNodeFactory factory = new ASTNodeFactory();
+}
+
+PARSER_END(NolifeParser)
+
+SKIP :
+{
+ 	" "
+|	"\r"
+|	"\t"
+|	"\n"
+|   <"{"(~["}"])*"}">
+} 
+
+TOKEN : /* keywords */
+{
+    < O_MOD: "MOD">
+    | <O_AND: "AND">
+    | <O_ARRAY: "ARRAY">
+    | <O_BEGIN: "BEGIN">
+    | <O_CHARACTER: "CHARACTER">
+    | <O_DO: "DO">
+    | <O_ELSE: "ELSE">
+    | <O_END: "END">
+    | <O_FLOAT: "FLOAT">
+    | <O_FUNCTION: "FUNCTION">
+    | <O_IF: "IF">
+    | <O_INTEGER: "INTEGER">
+    | <O_NEW: "NEW" >
+    | <O_NOT: "NOT">
+    | <O_OF: "OF">
+    | <O_OR: "OR">
+    | <O_PROCEDURE: "PROCEDURE">
+    | <O_PROGRAM: "PROGRAM">
+    | <O_READ: "READ">
+    | <O_RECORD: "RECORD" >
+    | <O_RETURN: "RETURN">
+    | <O_THEN: "THEN">
+    | <O_VAR: "VAR">
+    | <O_WHILE: "WHILE">
+    | <O_WRITE: "WRITE">
+    | <O_CASE: "CASE">
+    | < O_NIL: "NIL" >
+}
+
+TOKEN : /* other lexical tokens */
+{
+  <O_LE: "<=">
+| <O_LT: "<">
+| <O_GE: ">=">
+| <O_GT: ">">
+| <O_EQ: "=">
+| <O_NE: "<>">
+| <O_ASSIGN: ":=">
+| <O_COLON: ":">
+| <O_SEMICOLON: ";">
+| <O_COMMA: ",">
+| <O_LBRACKET: "[">
+| <O_RBRACKET: "]">
+| <O_LPAREN: "(">
+| <O_RPAREN: ")">
+| < O_DOT: "." >
+| <O_PLUS: "+">
+| <O_MINUS: "-">
+| <O_TIMES: "*">
+| <O_CHAR: "'"~["'"]"'">
+| <O_STRING: "'"~["'"](~["'"])+"'">
+| <#DIGIT: ["0" - "9"] >
+| <#ALPHA: ["a" - "z"] | ["A" - "Z"] >
+| <O_IDENTIFIER: <ALPHA> (<ALPHA> | <DIGIT>)*>
+| <#EXPONENT: ("e" | "E") ("+" | "-")? (<DIGIT>)+ >
+| <O_FLOATCON: <O_INT> (< O_DOT > (<DIGIT>)+ (<EXPONENT>)? | <EXPONENT>) >
+| <O_INT: "0" | ["1" - "9"](<DIGIT>)* >
+}
+
+ProgramNode program(): 
+{
+	VariableDeclarationListNode variableDecls = (VariableDeclarationListNode)factory.makeASTNode("VariableDeclarationListNode");;
+	RecordDeclListNode recordTypes = (RecordDeclListNode)factory.makeASTNode("RecordDeclListNode");
+	SubProgramDeclListNode subProgDecls = (SubProgramDeclListNode)factory.makeASTNode("SubProgramDeclListNode");
+	CompoundStatementNode body;
+	Token prog,name;
+}
+{
+   prog = <O_PROGRAM> name = <O_IDENTIFIER> <O_SEMICOLON>
+   (     recordTypes = recordTypeDecls()   )?
+   (variableDecls = decls())?
+   (subProgDecls = subprogram_decls())? 
+   body = compound_stmt()
+  	{
+    	return ((ProgramNode)factory.makeASTNode("ProgramNode"))
+    		.addName(name.image)
+    		.addRecordDeclList(recordTypes)
+    		.addVariableDeclList(variableDecls)
+    		.addSubProgramDeclList(subProgDecls)
+    		.addBody(body)
+    		.addLineNumber(prog.beginLine);
+  	}
+}
+
+RecordDeclListNode recordTypeDecls():
+{  RecordDeclListNode records = (RecordDeclListNode)factory.makeASTNode("RecordDeclListNode");
+  RecordElementListNode elements;
+  Token rec, name;
+}
+{  (    rec = < O_RECORD > name = < O_IDENTIFIER > < O_EQ > elements = recordElements() < O_END > < O_SEMICOLON >
+    {	  RecordDeclarationNode recDecl = ((RecordDeclarationNode)factory.makeASTNode("RecordDeclarationNode"))
+	  	.addRecordName(name.image)
+	  	.addElements(elements)
+	  	.addLineNumber(rec.beginLine);
+	  
+	  records.addRecordDecl(recDecl);
+    }
+  )+
+  {    return records;
+  }
+}
+
+RecordElementListNode recordElements() :
+{  TypeNode typeN;
+  Vector<String> idList;
+  RecordElementListNode elementList = (RecordElementListNode)factory.makeASTNode("RecordElementListNode");
+  Token colon;
+}
+{
+  idList = identifier_list() colon = < O_COLON > typeN = type()
+  {    RecordElementNode recElem = ((RecordElementNode)factory.makeASTNode("RecordElementNode"))
+    	.addNames(idList)
+    	.addTypeNode(typeN)
+    	.addLineNumber(colon.beginLine);
+
+    elementList.addRecordElement(recElem);
+  }
+  (    < O_SEMICOLON > idList = identifier_list() colon = < O_COLON > typeN = type()
+    {      recElem = ((RecordElementNode)factory.makeASTNode("RecordElementNode"))
+      	.addNames(idList)
+      	.addTypeNode(typeN)
+      	.addLineNumber(colon.beginLine);
+
+      elementList.addRecordElement(recElem);
+    }
+  )*
+
+  {
+    return elementList;
+  }
+}      
+VariableDeclarationListNode decls(): 
+{
+ 	VariableDeclarationListNode declList;
+}
+{
+	<O_VAR> declList = decl_list()
+	{
+		return declList;
+	}
+}
+
+VariableDeclarationListNode decl_list() : 
+{
+	VariableDeclarationListNode declList = (VariableDeclarationListNode)factory.makeASTNode("VariableDeclarationListNode");
+	VariableDeclarationNode variableDecl;
+	Vector<String> idList;
+	TypeNode idType;
+	Token semi;
+}
+{
+  (idList = identifier_list() <O_COLON> idType = type() 
+   semi = <O_SEMICOLON>
+  	{
+    	variableDecl = ((VariableDeclarationNode)factory.makeASTNode("VariableDeclarationNode"))
+    		.addIdList(idList)
+    		.addType(idType)
+    		.addLineNumber(semi.beginLine);
+    	declList.addVariableDeclaration(variableDecl);
+  	}
+  )+
+  
+  {
+  	return declList;
+  }
+}
+
+Vector<String> identifier_list() : 
+{
+	Vector<String> idList = new Vector<String>();
+	String name;
+	Token id;
+}
+{
+	id = <O_IDENTIFIER>
+  		{
+    		name = new String(id.image);
+    		idList.add(name);
+  		}
+  	(<O_COMMA> id = <O_IDENTIFIER>
+  		{
+    	 	name = new String(id.image);
+    		idList.add(name);
+  		}
+  	)*
+  	
+  	{
+  		return idList;
+  	}
+}
+
+TypeNode type() : 
+{
+	TypeNode typeN;
+}
+{
+  (
+  	typeN = standard_type()
+  | typeN = array_type()
+  | typeN = record_type()
+  )
+  
+  {
+  	return typeN;
+  }
+}
+
+StandardTypeNode standard_type() : 
+{
+	StandardTypeNode standardType;
+	Token stype;
+}
+{
+	(
+		stype = <O_INTEGER>
+  			{
+    			standardType = ((StandardTypeNode)factory.makeASTNode("StandardTypeNode"))
+    				.addBasicType(TypeTable.INT_TYPE)
+    				.addLineNumber(stype.beginLine);
+  			}
+  		| stype = <O_FLOAT>
+	  		{
+	    		standardType = ((StandardTypeNode)factory.makeASTNode("StandardTypeNode"))
+	    			.addBasicType(TypeTable.FLOAT_TYPE)
+	    			.addLineNumber(stype.beginLine);
+	  		}
+  		| stype = <O_CHARACTER>
+		  	{
+		   	 standardType = ((StandardTypeNode)factory.makeASTNode("StandardTypeNode"))
+		   	 	.addBasicType(TypeTable.CHAR_TYPE)
+		   	 	.addLineNumber(stype.beginLine);
+		  	}     		  
+  	)
+  	{
+  		return standardType;
+  	}
+}
+
+ArrayTypeNode array_type() : 
+{
+	ArrayTypeNode arrayType;
+	DimensionNode dimension;
+	TypeNode typeNode;
+	Token array;
+	}
+{
+    array = <O_ARRAY> <O_LBRACKET> dimension = dim() <O_RBRACKET> <O_OF>
+    	(
+    	  typeNode = standard_type()
+    	| typeNode = record_type()
+   		)
+  	  {
+    		return ((ArrayTypeNode)factory.makeASTNode("ArrayTypeNode"))
+    			.addDimension(dimension)
+    			.addBaseType(typeNode)
+    			.addLineNumber(array.beginLine);	    	
+  	  }  
+}
+
+RecordTypeNode record_type() :
+{  RecordTypeNode rNode;
+  Token  name;
+}
+{  	name = < O_IDENTIFIER >
+	{    	return ((RecordTypeNode)factory.makeASTNode("RecordTypeNode"))
+    		.addRecordName(name.image)
+    		.addLineNumber(name.beginLine);
+  	}
+}	  
+
+DimensionNode dim() : 
+{
+	DimensionNode dimNode;
+	Token lower,upper;
+}
+{
+	(
+		lower = <O_INT> <O_DOT> <O_DOT > upper = <O_INT>
+  			{
+    			int lowerBound = Integer.valueOf(lower.image).intValue();
+    			int upperBound = Integer.valueOf(upper.image).intValue();
+
+    			dimNode = ((IntegerDimensionNode)factory.makeASTNode("IntegerDimensionNode"))
+    				.addLowerBound(lowerBound)
+    				.addUpperBound(upperBound)
+    				.addLineNumber(lower.beginLine);
+  			}
+  			
+  		| lower = <O_CHAR> <O_DOT> <O_DOT > upper = <O_CHAR>
+  			{
+    			dimNode = ((CharacterDimensionNode)factory.makeASTNode("CharacterDimensionNode"))
+    				.addLowerBound(lower.image.charAt(1))
+					.addUpperBound(upper.image.charAt(1))
+					.addLineNumber(lower.beginLine);
+  			}
+  	)
+  	
+  	{
+  		return dimNode;
+  	}
+}
+
+SubProgramDeclListNode subprogram_decls() : 
+{
+	SubProgramDeclListNode subProgDecls = (SubProgramDeclListNode)factory.makeASTNode("SubProgramDeclListNode");
+	SubProgramDeclNode subDecl = null;
+}
+{
+	(
+		subDecl = subprogram_decl() <O_SEMICOLON>
+  			{
+    			subProgDecls.addSubProgram(subDecl);
+  			}
+  	)+
+  
+  	{
+  		return subProgDecls;
+  	}
+}
+
+SubProgramDeclNode subprogram_decl() : 
+{
+	SubProgramDeclNode declNode;
+	VariableDeclarationListNode variableDecls = (VariableDeclarationListNode)factory.makeASTNode("VariableDeclarationListNode");
+	CompoundStatementNode body;
+}
+{
+	declNode = subprogram_head() (variableDecls = decls())? body = compound_stmt()
+  		{
+    		return declNode.addVariableDeclList(variableDecls)
+		    	.addBody(body);
+ 		 }
+}
+
+SubProgramDeclNode subprogram_head() : 
+{
+	SubProgramDeclNode declNode;
+	VariableDeclarationListNode paramList = (VariableDeclarationListNode)factory.makeASTNode("VariableDeclarationListNode");
+	TypeNode declType;
+	Token func,name;
+}
+{
+	(
+		func = <O_FUNCTION> name = <O_IDENTIFIER> (paramList = arguments())? <O_COLON>		(		  declType = standard_type()
+		|  declType = record_type()		) <O_SEMICOLON>
+  			{
+			    declNode = ((SubProgramDeclNode)factory.makeASTNode("FunctionDeclNode"))
+			    	.addName(name.image)
+			    	.addParamList(paramList)
+			    	.addReturnType(declType)
+			    	.addLineNumber(func.beginLine);
+			}
+  		| func = <O_PROCEDURE> name = <O_IDENTIFIER> (paramList = arguments())? <O_SEMICOLON>
+		  	{
+			    declNode = ((SubProgramDeclNode)factory.makeASTNode("ProcedureDeclNode"))
+			    	.addName(name.image)
+			    	.addParamList(paramList)
+			    	.addLineNumber(func.beginLine);
+		  	}
+	)
+	
+	{
+		return declNode;
+	}
+}
+
+VariableDeclarationListNode arguments() : 
+{
+	VariableDeclarationListNode paramList;
+}
+{
+  <O_LPAREN> paramList = parameter_list() <O_RPAREN>
+  
+  {
+  	return paramList;
+  }
+}
+
+VariableDeclarationListNode parameter_list() : 
+{
+	VariableDeclarationListNode paramList = (VariableDeclarationListNode)factory.makeASTNode("VariableDeclarationListNode");
+	Vector<String > idList;
+	TypeNode idType;
+	VariableDeclarationNode paramDecl;
+	Token token;
+}
+{
+	idList = identifier_list() token = <O_COLON> idType = type()
+	    {
+		     paramDecl = ((VariableDeclarationNode)factory.makeASTNode("VariableDeclarationNode"))
+		     	.addIdList(idList)
+		     	.addType(idType)
+		     	.addLineNumber(token.beginLine);
+		     
+		     paramList.addVariableDeclaration(paramDecl);
+	    }
+    (
+    	<O_SEMICOLON> idList = identifier_list() token = <O_COLON> idType = type()
+	    {
+		     paramDecl = ((VariableDeclarationNode)factory.makeASTNode("VariableDeclarationNode"))
+		     	.addIdList(idList)
+		     	.addType(idType)
+		     	.addLineNumber(token.beginLine);
+		     
+		     paramList.addVariableDeclaration(paramDecl);
+		     
+	   }
+    )*
+    
+    {
+    	return paramList;
+    }
+}
+
+CompoundStatementNode compound_stmt() : 
+{
+	CompoundStatementNode compoundStmt;
+	Token token;
+}
+{
+	token = <O_BEGIN> compoundStmt = stmt_list() <O_END>
+  	{
+    	
+    	
+	    compoundStmt.setLineNumber(token.beginLine);
+	    
+ 	   	
+ 	   	return compoundStmt;
+ 	 }
+}
+
+CompoundStatementNode stmt_list() : 
+{
+	CompoundStatementNode compoundStmt = (CompoundStatementNode)factory.makeASTNode("CompoundStatementNode");
+	StatementNode stmtNode;
+}
+{
+	stmtNode = stmt()
+  		{
+    		compoundStmt.addStatement(stmtNode);
+  		}
+  	(
+  		<O_SEMICOLON> stmtNode = stmt()
+  			{
+   				compoundStmt.addStatement(stmtNode);
+  			}
+  	)*
+	
+	{
+		return compoundStmt;
+	}
+}
+
+StatementNode stmt() :
+{
+	StatementNode stmtNode;
+  	ExpressionNode invocation = null;
+}
+
+{
+	( LOOKAHEAD(2)
+		stmtNode = assignment()
+  		| stmtNode = if_stmt()
+  		| stmtNode = while_stmt()
+  		| invocation = procedure_invocation()
+  			{
+   				stmtNode = ((ProcedureInvocationNode)factory.makeASTNode("ProcedureInvocationNode"))
+   					.addInvocation((InvocationNode)invocation)
+   					.addLineNumber(invocation.getLineNumber());
+  			}
+  		| stmtNode = i_o_stmt()
+  		| stmtNode = compound_stmt()
+  		| stmtNode = return_stmt()
+  		| stmtNode = case_stmt()
+	)
+	
+	{
+		return stmtNode;
+	}
+}
+
+AssignmentStatementNode assignment() :
+{
+	AssignmentStatementNode assignStmt;
+ 	VariableReferenceNode lhs;
+ 	ExpressionNode rhs;
+ 	Token token;
+}
+{
+	lhs = variable() token = <O_ASSIGN> rhs = expr()
+  {
+    return ((AssignmentStatementNode)factory.makeASTNode("AssignmentStatementNode"))
+    	.addLhs(lhs)
+    	.addRhs(rhs)
+    	.addLineNumber(token.beginLine);
+  }
+}
+
+IfStatementNode if_stmt() :
+{
+	IfStatementNode ifStmt;
+  	StatementNode thenStmt;
+  	StatementNode elseStmt = null;
+ 	ExpressionNode testExpr;
+ 	Token token;
+}
+{
+	token = <O_IF> testExpr = expr() <O_THEN> thenStmt = stmt() 
+	[LOOKAHEAD(<O_ELSE>) <O_ELSE> elseStmt = stmt()]
+  		{
+		    return (elseStmt != null) ?
+		    	((IfStatementNode)factory.makeASTNode("IfStatementNode"))
+			    	.addTestExpression(testExpr)
+			    	.addThenStatement(thenStmt)
+			    	.addElseStatement(elseStmt)
+			    	.addLineNumber(token.beginLine) :
+			    ((IfStatementNode)factory.makeASTNode("IfStatementNode"))
+			    	.addTestExpression(testExpr)
+			    	.addThenStatement(thenStmt)
+			    	.addLineNumber(token.beginLine);
+		}
+}
+
+WhileStatementNode while_stmt() :
+{
+	WhileStatementNode whileStmt;
+  	ExpressionNode whileExpr;
+  	StatementNode controlStmt;
+  	Token token;
+}
+{
+	token = <O_WHILE> whileExpr = expr() <O_DO> controlStmt = stmt()
+  		{
+		    return ((WhileStatementNode)factory.makeASTNode("WhileStatementNode"))
+		    	.addWhileExpression(whileExpr)
+		    	.addControlledStatement(controlStmt)
+		    	.addLineNumber(token.beginLine);
+		}
+}
+
+InvocationNode procedure_invocation() :
+{
+	InvocationNode invocation ; 
+	ExpressionListNode exprList = (ExpressionListNode)factory.makeASTNode("ExpressionListNode");
+	Token token;
+}
+{
+	token = <O_IDENTIFIER> <O_LPAREN> (exprList = expr_list())? <O_RPAREN>
+	  {
+		   return ((InvocationNode)factory.makeASTNode("InvocationNode"))
+		   		.addName(token.image)
+		   		.addActualParameters(exprList)
+		   		.addLineNumber(token.beginLine);
+	  }
+} 
+
+StatementNode i_o_stmt() :
+{
+	StatementNode ioStmt;
+	VariableReferenceNode varNode = null;
+  	ExpressionNode writeExpr = null;
+  	Token token;
+}
+{
+	(
+		token = <O_READ> <O_LPAREN> varNode = variable() <O_RPAREN>
+		  {
+		    ioStmt = ((ReadStatementNode)factory.makeASTNode("ReadStatementNode"))
+		    	.addVariable(varNode)
+		    	.addLineNumber(token.beginLine);
+		  }
+  		| token = <O_WRITE> <O_LPAREN> (writeExpr = expr() | 
+  										writeExpr = string()) <O_RPAREN>
+		  {
+		    ioStmt = ((WriteStatementNode)factory.makeASTNode("WriteStatementNode"))
+		    	.addWriteExpression(writeExpr)
+		    	.addLineNumber(token.beginLine);
+		  }
+	)
+	
+	{
+		return ioStmt;
+	}
+}
+
+ReturnStatementNode return_stmt() :
+{
+	ReturnStatementNode returnStmt;
+	ExpressionNode exprNode;
+	Token token;
+}
+{
+	token = <O_RETURN> exprNode = expr()
+	  {
+	    return ((ReturnStatementNode)factory.makeASTNode("ReturnStatementNode"))
+	    	.addReturnExpression(exprNode)
+	    	.addLineNumber(token.beginLine);
+	  }
+}
+
+CaseStatementNode case_stmt() :
+{
+	CaseStatementNode caseStatement;
+	ExpressionNode caseExpr;
+  	CaseElementListNode caseList = (CaseElementListNode)factory.makeASTNode("CaseElementListNode");
+  	Token token;
+}
+{
+	token = <O_CASE> caseExpr = expr() <O_OF> (caseList = cases())? <O_END>
+	  {
+		   return ((CaseStatementNode)factory.makeASTNode("CaseStatementNode"))
+		   		.addCaseExpression(caseExpr)
+		   		.addCaseElementList(caseList)
+		   		.addLineNumber(token.beginLine);
+	  }
+} 
+
+CaseElementListNode cases() :
+{
+	CaseElementListNode caseList = (CaseElementListNode)factory.makeASTNode("CaseElementListNode");
+	CaseElementNode caseElement;
+}
+{
+	caseElement = case_element()
+    	{
+    		caseList.addCaseElement(caseElement);
+    	}
+    (
+    	<O_SEMICOLON> caseElement = case_element()
+    		{
+     			caseList.addCaseElement(caseElement);
+    		}
+    )*
+    
+    {
+    	return caseList;
+    }
+}
+
+CaseElementNode case_element() :
+{
+	CaseElementNode caseElement;
+	StatementNode stmtNode;
+  	ExpressionListNode caseLabelList;
+  	Token token;
+}
+{
+  caseLabelList = case_labels() token = <O_COLON> stmtNode = stmt()
+  	{
+	    return ((CaseElementNode)factory.makeASTNode("CaseElementNode"))
+	    	.addCaseLabelList(caseLabelList)
+	    	.addStatement(stmtNode)
+	    	.addLineNumber(token.beginLine);
+  	}
+}
+
+ExpressionListNode case_labels() : 
+{
+	ExpressionListNode caseLabelList = (ExpressionListNode)factory.makeASTNode("ExpressionListNode");
+	ConstantNode constNode = null;
+}
+{
+	constNode = constant()
+  		{
+   			caseLabelList.addExpression(constNode);
+  		}
+  	(
+  		<O_COMMA> constNode = constant()
+  			{
+   				caseLabelList.addExpression(constNode);
+  			}
+  	)*
+  	
+  	{
+  		return caseLabelList;
+  	}
+}
+
+ExpressionListNode expr_list() : 
+{
+	ExpressionListNode exprList = (ExpressionListNode)factory.makeASTNode("ExpressionListNode");
+	ExpressionNode exprNode = null;
+}
+{
+	exprNode = expr()
+	  {
+	    exprList.addExpression(exprNode);
+	  }
+  	(
+  		<O_COMMA> exprNode = expr()
+		  {
+		   exprList.addExpression(exprNode);
+		  }
+  	)*
+  	
+  	{
+  		return exprList;
+  	}
+}
+
+ExpressionNode expr() :
+{
+	ExpressionNode exprNode;
+	ExpressionNode term1Node = null;
+ 	ExpressionNode exprPrimeNode = null;
+}
+{
+	term1Node = term1() exprPrimeNode = exprPrime()
+	{
+	    if (exprPrimeNode != null) {
+	      ((BinaryExpressionNode)exprPrimeNode).addLeftOperand(term1Node);
+	      exprNode = exprPrimeNode;
+	    }
+	    else
+	      exprNode = term1Node;
+	    exprNode.setLineNumber(term1Node.getLineNumber());
+	    
+	    return exprNode;
+	}
+}
+
+ExpressionNode exprPrime() : 
+{
+	ExpressionNode exprPrimeNode;
+	ExpressionNode term1Node = null;
+ 	ExpressionNode epNode = null;
+ 	Token token;
+}
+{
+	(
+		token = <O_OR> term1Node = term1() epNode = exprPrime()
+		  	{
+			    if (epNode != null) 
+			      ((BinaryExpressionNode)epNode).addLeftOperand(term1Node);
+			    else
+			      epNode = term1Node;
+			      
+			    exprPrimeNode = ((BinaryExpressionNode)factory.makeASTNode("OrExpressionNode"))
+			    	.addRightOperand(epNode)
+			    	.addLineNumber(token.beginLine);
+		  	}
+  		| token = <O_AND> term1Node = term1() epNode = exprPrime()
+  			{
+			    if (epNode != null)
+			      ((BinaryExpressionNode)epNode).addLeftOperand(term1Node);
+			    else
+			      epNode = term1Node;
+			      
+			    exprPrimeNode = ((BinaryExpressionNode)factory.makeASTNode("AndExpressionNode"))
+			    	.addRightOperand(epNode)
+			    	.addLineNumber(token.beginLine);
+  			}
+  		|
+		  	{
+			   exprPrimeNode = null;
+			}
+	)
+	
+	{
+		return exprPrimeNode;
+	}
+}
+
+ExpressionNode term1() :
+{
+	ExpressionNode term1Node;
+	ExpressionNode term2Node = null;
+ 	ExpressionNode term1PrimeNode = null;
+}
+{
+	term2Node = term2() term1PrimeNode = term1Prime()
+  		{
+		    if (term1PrimeNode != null) {
+		      ((BinaryExpressionNode)term1PrimeNode).addLeftOperand(term2Node);
+		      term1Node = term1PrimeNode;
+		    }
+		    else
+		      term1Node = term2Node;
+		      
+		    term1Node.setLineNumber(term2Node.getLineNumber());
+		    
+		    return term1Node;
+  		}
+}
+
+ExpressionNode term1Prime() :
+{
+	ExpressionNode term1PrimeNode;
+	ExpressionNode term2Node = null;
+  	ExpressionNode t1pNode = null;
+  	Token token;
+}
+{
+	(
+		token = <O_LT> term2Node = term2() t1pNode = term1Prime()
+  			{
+			    if (t1pNode != null)
+			      ((BinaryExpressionNode)t1pNode).addLeftOperand(term2Node);
+			    else
+			      t1pNode = term2Node;
+			      
+			    term1PrimeNode = ((BinaryExpressionNode)factory.makeASTNode("LessThanExpressionNode"))
+			    	.addRightOperand(t1pNode)
+			    	.addLineNumber(token.beginLine);
+  			}
+  		| token = <O_LE> term2Node = term2() t1pNode = term1Prime()
+		  	{
+			    if (t1pNode != null)
+			      ((BinaryExpressionNode)t1pNode).addLeftOperand(term2Node);
+			    else
+			      t1pNode = term2Node;
+			    term1PrimeNode = ((BinaryExpressionNode)factory.makeASTNode("LessEqualExpressionNode"))
+			    	.addRightOperand(t1pNode)
+			    	.addLineNumber(token.beginLine);
+		  	}
+  		| token = <O_GT> term2Node = term2() t1pNode = term1Prime()
+  			{
+			    if (t1pNode != null)
+			      ((BinaryExpressionNode)t1pNode).addLeftOperand(term2Node);
+			    else
+			      t1pNode = term2Node;
+			      
+			    term1PrimeNode = ((BinaryExpressionNode)factory.makeASTNode("GreaterThanExpressionNode"))
+			    	.addRightOperand(t1pNode)
+			    	.addLineNumber(token.beginLine);
+  			}
+  		| token = <O_GE> term2Node = term2() t1pNode = term1Prime()
+  			{
+			    if (t1pNode != null)
+			      ((BinaryExpressionNode)t1pNode).addLeftOperand(term2Node);
+			    else
+			      t1pNode = term2Node;
+			      
+			    term1PrimeNode = ((BinaryExpressionNode)factory.makeASTNode("GreaterEqualExpressionNode"))
+			    	.addRightOperand(t1pNode)
+			    	.addLineNumber(token.beginLine);
+  			}
+  		| token = <O_NE> term2Node = term2() t1pNode = term1Prime()
+  			{
+			    if (t1pNode != null)
+			      ((BinaryExpressionNode)t1pNode).addLeftOperand(term2Node);
+			    else
+			      t1pNode = term2Node;
+			      
+			    term1PrimeNode =((BinaryExpressionNode)factory.makeASTNode("NotEqualExpressionNode"))
+			    	.addRightOperand(t1pNode)
+			    	.addLineNumber(token.beginLine);
+  			}
+  		| token = <O_EQ> term2Node = term2() t1pNode = term1Prime()
+   			{
+			    if (t1pNode != null)
+			      ((BinaryExpressionNode)t1pNode).addLeftOperand(term2Node);
+			    else
+			      t1pNode = term2Node;
+			    term1PrimeNode = ((BinaryExpressionNode)factory.makeASTNode("EqualExpressionNode"))
+			    	.addRightOperand(t1pNode)
+			    	.addLineNumber(token.beginLine);
+  			}
+ 		|
+ 			{
+			  term1PrimeNode = null;
+			}
+	)
+	
+	{
+		return term1PrimeNode;
+	}
+}
+
+ExpressionNode term2() :
+{
+	ExpressionNode term2Node;
+	ExpressionNode term3Node = null;
+ 	ExpressionNode term2PrimeNode = null;
+}
+{
+	term3Node = term3() term2PrimeNode = term2Prime()
+  		{
+		    if (term2PrimeNode != null) {
+		      ((BinaryExpressionNode)term2PrimeNode).addLeftOperand(term3Node);
+		      term2Node = term2PrimeNode;
+		    }
+		    else
+		      term2Node = term3Node;
+		    term2Node.setLineNumber(term3Node.getLineNumber());
+		    
+		    return term2Node;
+  		}
+}
+
+ExpressionNode term2Prime() :
+{
+	ExpressionNode term2PrimeNode;
+  	ExpressionNode term3Node = null;
+  	ExpressionNode t2pNode = null;
+  	Token token;
+}
+{
+	(
+		token = <O_PLUS> term3Node = term3() t2pNode = term2Prime()
+  			{
+			    if (t2pNode != null)
+			      ((BinaryExpressionNode)t2pNode).addLeftOperand(term3Node);
+			    else
+			      t2pNode = term3Node;
+			    term2PrimeNode = ((BinaryExpressionNode)factory.makeASTNode("AddExpressionNode"))
+			    	.addRightOperand(t2pNode)
+			    	.addLineNumber(token.beginLine);
+  			}
+  		| token = <O_MINUS> term3Node = term3() t2pNode = term2Prime()
+  			{
+			    if (t2pNode != null)
+			      ((BinaryExpressionNode)t2pNode).addLeftOperand(term3Node);
+			    else
+			      t2pNode = term3Node;
+			      
+			    term2PrimeNode = ((BinaryExpressionNode)factory.makeASTNode("SubtractExpressionNode"))
+			    	.addRightOperand(t2pNode)
+			    	.addLineNumber(token.beginLine);
+ 			}
+  		|
+  			{
+    			term2PrimeNode = null;
+  			}
+	)
+	
+	{
+		return term2PrimeNode;
+	}
+}
+
+ExpressionNode term3() :
+{
+	ExpressionNode term3Node;
+	ExpressionNode factorNode = null;
+  	ExpressionNode term3PrimeNode = null;
+}
+{
+	factorNode = factor() term3PrimeNode = term3Prime()
+  		{
+		    if (term3PrimeNode != null) {
+		      ((BinaryExpressionNode)term3PrimeNode).addLeftOperand(factorNode);
+		      term3Node = term3PrimeNode;
+		    }
+		    else
+		      term3Node = factorNode;
+		    term3Node.setLineNumber(factorNode.getLineNumber());
+		    
+		    return term3Node;
+  		}
+}  
+
+ExpressionNode term3Prime() :
+{
+	ExpressionNode term3PrimeNode;
+	ExpressionNode factorNode = null;
+  	ExpressionNode t3pNode = null;
+  	Token token;
+}
+{
+	(
+		token = <O_TIMES> factorNode = factor() t3pNode = term3Prime()
+  			{
+			    if (t3pNode != null) 
+			      ((BinaryExpressionNode)t3pNode).addLeftOperand(factorNode);
+			    else
+			      t3pNode = factorNode;
+			      
+			    term3PrimeNode = ((BinaryExpressionNode)factory.makeASTNode("MultiplyExpressionNode"))
+			    	.addRightOperand(t3pNode)
+			    	.addLineNumber(token.beginLine);
+  			}
+  		| token = <O_MOD> factorNode = factor() t3pNode = term3Prime()
+  			{
+			    if (t3pNode != null)
+			      ((BinaryExpressionNode)t3pNode).addLeftOperand(factorNode);
+			    else
+			      t3pNode = factorNode;
+			    term3PrimeNode = ((BinaryExpressionNode)factory.makeASTNode("ModExpressionNode"))
+			    	.addRightOperand(t3pNode)
+			    	.addLineNumber(token.beginLine);
+  			}
+  		|
+  			{
+   			term3PrimeNode = null;
+  			}
+	)
+	
+	{
+		return term3PrimeNode;
+	}
+}
+
+ExpressionNode factor() :
+{
+	ExpressionNode factorNode ;
+	InvocationNode invocation = null;
+  	ExpressionNode fNode,exprNode = null;
+  	VariableReferenceNode varNode = null;
+  	ExpressionListNode exprList = null;
+  	Token token, name;
+}
+{
+	( 
+		token = <O_IDENTIFIER> (
+								<O_LBRACKET> exprNode = expr() <O_RBRACKET>
+								| <O_LPAREN> (exprList = expr_list())? <O_RPAREN>
+								
+								  { 
+								  	if (exprList == null)
+								  	  exprList = (ExpressionListNode)factory.makeASTNode("ExpressionListNode")
+			    									.addLineNumber(token.beginLine);
+								  }
+
+								 | < O_DOT > varNode = variable()
+							   )?
+			{
+				if (exprNode != null) { 
+			    	factorNode = ((ArrayReferenceNode)factory.makeASTNode("ArrayReferenceNode"))
+			    		.addName(token.image)
+			    		.addSubscript(exprNode)
+			    		.addLineNumber(token.beginLine);
+				} else if (exprList != null) {
+				   	invocation = ((InvocationNode)factory.makeASTNode("InvocationNode"))
+				   		.addName(token.image)
+				   		.addActualParameters(exprList)
+				   		.addLineNumber(token.beginLine);
+				   	
+					factorNode = ((FunctionInvocationNode)factory.makeASTNode("FunctionInvocationNode"))
+						.addInvocation(invocation)
+			    		.addLineNumber(token.beginLine);
+				}
+				else if (varNode != null)				{				  	factorNode = ((RecordReferenceNode)factory.makeASTNode("RecordReferenceNode"))
+				  		.addName(token.image)
+				  		.addElement(varNode)
+			    		.addLineNumber(token.beginLine);
+			    }
+		        else
+					factorNode = ((ScalarReferenceNode)factory.makeASTNode("ScalarReferenceNode"))
+						.addName(token.image)
+				   		.addLineNumber(token.beginLine);
+	 		}
+		| token = < O_NEW > name = < O_IDENTIFIER >
+			{				factorNode = ((RecordInstantiationNode)factory.makeASTNode("RecordInstantiationNode"))
+					.addRecordName(name.image)
+				   	.addLineNumber(token.beginLine);
+			}
+  		| factorNode = constant()
+  		| factorNode = character()
+  		| token = <O_LPAREN> fNode = expr() <O_RPAREN>
+  			{
+			    factorNode = ((ParenthesisNode)factory.makeASTNode("ParenthesisNode"))
+			    	.addOperand(fNode)
+				   	.addLineNumber(token.beginLine);
+  			}
+  		| token = <O_NOT> fNode = factor()
+  			{
+			    factorNode = ((NotExpressionNode)factory.makeASTNode("NotExpressionNode"))
+			    	.addOperand(fNode)
+				   	.addLineNumber(token.beginLine);
+  			}
+	)
+	
+	{
+		return factorNode;
+	}
+}
+
+VariableReferenceNode variable() : 
+{
+	VariableReferenceNode varNode = null;
+	VariableReferenceNode elemNode = null;
+	ExpressionNode exprNode = null;
+	Token name;
+}
+{
+	name = <O_IDENTIFIER>
+	(
+	  <O_LBRACKET> exprNode = expr() <O_RBRACKET>
+	| < O_DOT > elemNode = variable()
+	)?
+		{ 
+			if (exprNode == null)
+				if (elemNode == null)
+					varNode = ((ScalarReferenceNode)factory.makeASTNode("ScalarReferenceNode"))
+						.addName(name.image)
+						.addLineNumber(name.beginLine);
+				else				{
+					varNode = ((RecordReferenceNode)factory.makeASTNode("RecordReferenceNode"))
+						.addName(name.image)
+						.addElement(elemNode)
+						.addLineNumber(name.beginLine);
+			    }
+			else {
+		    	varNode = ((ArrayReferenceNode)factory.makeASTNode("ArrayReferenceNode"))
+		    		.addName(name.image)
+		    		.addSubscript(exprNode)
+					.addLineNumber(name.beginLine);
+			}
+		    
+			return varNode;
+ 		}
+}
+
+ConstantNode constant() : 
+{
+	ConstantNode constNode;
+}
+{
+	(
+		constNode = integer()
+  		| constNode = floatConst()
+  		| constNode = pointerConst()
+  	)
+  	
+  	{
+  		return constNode;
+  	}
+}
+
+IntegerConstNode integer() : 
+{
+	IntegerConstNode intNode;
+	Token intConst;
+}
+{
+  intConst = <O_INT>
+   	{
+	    return ((IntegerConstNode)factory.makeASTNode("IntegerConstNode"))
+	    	.addValue(Integer.valueOf(intConst.image).intValue())
+			.addLineNumber(intConst.beginLine);
+   	}
+}
+
+FloatConstNode floatConst() :
+{
+	FloatConstNode floatNode;
+	Token floatConst;
+}
+{
+	floatConst = <O_FLOATCON>
+   		{
+     		return ((FloatConstNode)factory.makeASTNode("FloatConstNode"))
+     			.addValue(Float.valueOf(floatConst.image).floatValue())
+				.addLineNumber(floatConst.beginLine);
+   		}
+}
+
+NilNode pointerConst() :
+{  NilNode pNode;
+  Token nilConst;
+}
+{  nilConst = < O_NIL >
+  {    return (NilNode)factory.makeASTNode("NilNode")
+    	.addLineNumber(nilConst.beginLine);
+  }
+}
+
+CharacterNode character() : 
+{
+	CharacterNode charNode;
+	Token character;
+}
+{
+	 character = <O_CHAR>
+   		{
+     		return ((CharacterNode)factory.makeASTNode("CharacterNode"))
+     			.addValue(character.image.charAt(1))
+     			.addLineNumber(character.beginLine);
+   		}
+}
+
+StringNode string() :
+{
+	StringNode stringNode;
+	Token string;
+}
+{
+	 string = <O_STRING>
+   		{
+		    int length = string.image.length();
+		    return ((StringNode)factory.makeASTNode("StringNode"))
+		    	.addString(string.image.substring(1,length-1))
+		    	.addLineNumber(string.beginLine);
+   		}
+}

@@ -1,0 +1,41 @@
+	.data
+	.string	.int_wformat, "%d\12"
+	.string	.float_wformat, "%f\12"
+	.string	.char_wformat, "%c\12"
+	.string	.string_wformat, "%s\12"
+	.string	.int_rformat, "%d"
+	.string	.float_rformat, "%f"
+	.string	.char_rformat, "%c"
+	.string	.string_rformat, "%s"
+	.global	main_fp, 4, 4
+	.text
+	.frame	main, 0
+	loadI	main_fp  => %vr4
+	store	%vr0  => %vr4
+	call	a1 
+	call	a2 
+	call	a3 
+	call	a4 
+	ret
+	.frame	a1, 0
+	loadI	1  => %vr4
+	iwrite	%vr4
+	ret
+	.frame	a2, 0
+	call	a1 
+	loadI	2  => %vr4
+	iwrite	%vr4
+	ret
+	.frame	a3, 0
+	call	a1 
+	call	a2 
+	loadI	3  => %vr4
+	iwrite	%vr4
+	ret
+	.frame	a4, 0
+	call	a1 
+	call	a2 
+	call	a3 
+	loadI	4  => %vr4
+	iwrite	%vr4
+	ret

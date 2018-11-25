@@ -1,0 +1,2 @@
+#!/bin/tcsh
+java -jar /home/csdept/carr/classes/cs4131/NolifeCompiler/nlc-1.0/nlc.jar $*

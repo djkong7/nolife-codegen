@@ -1,0 +1,55 @@
+	.data
+	.string	.int_wformat, "%d\12"
+	.string	.float_wformat, "%f\12"
+	.string	.char_wformat, "%c\12"
+	.string	.string_wformat, "%s\12"
+	.string	.int_rformat, "%d"
+	.string	.float_rformat, "%f"
+	.string	.char_rformat, "%c"
+	.string	.string_rformat, "%s"
+	.global	main_fp, 4, 4
+	.text
+	.frame	main, 8
+	loadI	main_fp  => %vr4
+	store	%vr0  => %vr4
+	loadI	-4  => %vr5
+	add	%vr0, %vr5 => %vr6
+	iread	%vr6
+	loadI	-4  => %vr5
+	add	%vr0, %vr5 => %vr6
+	call	decls, %vr6 
+	loadI	-4  => %vr5
+	add	%vr0, %vr5 => %vr6
+	loadI	10  => %vr7
+	loadI	-8  => %vr8
+	add	%vr0, %vr8 => %vr9
+	store	%vr7  => %vr9
+	call	foo, %vr6, %vr9 
+	ret
+	.frame	decls, 4, %vr4
+	load	%vr4  => %vr5
+	iwrite	%vr5
+	load	%vr4  => %vr5
+	loadI	0  => %vr6
+	comp	%vr5, %vr6 => %vr7
+	testgt	%vr7  => %vr8
+	cbrne	%vr8  -> .L0
+	load	%vr4  => %vr5
+	loadI	1  => %vr9
+	sub	%vr5, %vr9 => %vr10
+	loadI	-4  => %vr11
+	add	%vr0, %vr11 => %vr12
+	store	%vr10  => %vr12
+	call	decls, %vr12 
+	jumpI	.L1
+.L0:	nop
+	loadI	0  => %vr6
+	store	%vr6  => %vr4
+.L1:	nop
+	ret
+	.frame	foo, 0, %vr4, %vr5
+	load	%vr4  => %vr6
+	iwrite	%vr6
+	load	%vr5  => %vr7
+	iwrite	%vr7
+	ret

@@ -1,0 +1,6 @@
+#!/bin/tcsh 
+set files = `ls *.nl`
+foreach f ($files)
+  echo "nlc -int $f > $f.il2"
+  nlc -int $f > $f.il2
+end

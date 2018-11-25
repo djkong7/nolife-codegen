@@ -1,0 +1,45 @@
+	.data
+	.string	.int_wformat, "%d\12"
+	.string	.float_wformat, "%f\12"
+	.string	.char_wformat, "%c\12"
+	.string	.string_wformat, "%s\12"
+	.string	.int_rformat, "%d"
+	.string	.float_rformat, "%f"
+	.string	.char_rformat, "%c"
+	.string	.string_rformat, "%s"
+	.text
+	.frame	main, 24
+	loadI	65  => %vr6
+	i2i	%vr6  => %vr4
+	loadI	122  => %vr7
+	i2i	%vr7  => %vr5
+	comp	%vr4, %vr5 => %vr8
+	testgt	%vr8  => %vr9
+	iwrite	%vr9
+	comp	%vr4, %vr5 => %vr8
+	testgt	%vr8  => %vr9
+	not	%vr9  => %vr10
+	iwrite	%vr10
+	loadI	3  => %vr11
+	loadI	100  => %vr12
+	i2i	%vr0  => %vr13
+	loadI	-4  => %vr14
+	add	%vr13, %vr14 => %vr15
+	loadI	97  => %vr16
+	sub	%vr12, %vr16 => %vr17
+	loadI	4  => %vr18
+	mult	%vr17, %vr18 => %vr19
+	sub	%vr15, %vr19 => %vr20
+	store	%vr11  => %vr20
+	loadI	100  => %vr12
+	i2i	%vr0  => %vr13
+	loadI	-4  => %vr14
+	add	%vr13, %vr14 => %vr15
+	loadI	97  => %vr16
+	sub	%vr12, %vr16 => %vr17
+	loadI	4  => %vr18
+	mult	%vr17, %vr18 => %vr19
+	sub	%vr15, %vr19 => %vr20
+	load	%vr20  => %vr21
+	iwrite	%vr21
+	ret
