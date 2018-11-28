@@ -74,6 +74,68 @@ push %esi
 fld dword ptr [%esp]
 add %esp, 4
 fstp dword ptr [%ebx]
+#SCALAR REF
+mov %ebx, -16
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
+#SCALAR REF
+mov %esi, -12
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+#ADD STATEMENT
+push %ebx
+fld dword ptr [%esp]
+add %esp, 4
+push %esi
+fld dword ptr [%esp]
+add %esp, 4
+fadd %st, %st(1)
+sub %esp, 4
+fstp dword ptr [%esp]
+
+pop %esi
+#SCALAR REF
+mov %ebx, -8
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
+#ADD STATEMENT
+push %esi
+fld dword ptr [%esp]
+add %esp, 4
+push %ebx
+fld dword ptr [%esp]
+add %esp, 4
+fadd %st, %st(1)
+sub %esp, 4
+fstp dword ptr [%esp]
+
+pop %ebx
+#SCALAR REF
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+#ADD STATEMENT
+push %ebx
+fld dword ptr [%esp]
+add %esp, 4
+push %esi
+fld dword ptr [%esp]
+add %esp, 4
+fadd %st, %st(1)
+sub %esp, 4
+fstp dword ptr [%esp]
+
+pop %esi
+#WRITE STATEMENT
+push %esi
+fld dword ptr [%esp]
+add %esp, 4
+sub %esp, 8
+fstp qword ptr [%esp]
+push offset flat:.flt_format
+call printf
+add %esp,12
+
 #ASSIGNMENT
 mov %ebx, -20
 add %ebx, %ebp
@@ -99,11 +161,11 @@ mov %esi, 4
 mov dword ptr [%ebx], %esi
 
 #SCALAR REF
-mov %ebx, -12
+mov %ebx, -16
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #SCALAR REF
-mov %esi, -8
+mov %esi, -12
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
 #ADD STATEMENT
@@ -119,7 +181,7 @@ fstp dword ptr [%esp]
 
 pop %esi
 #SCALAR REF
-mov %ebx, -4
+mov %ebx, -8
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #ADD STATEMENT
@@ -135,44 +197,9 @@ fstp dword ptr [%esp]
 
 pop %ebx
 #SCALAR REF
-mov %esi, -28
+mov %esi, -4
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
-#SCALAR REF
-mov %ecx, -32
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-imul %esi, %ecx
-#SCALAR REF
-mov %ecx, -24
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-#ADD STATEMENT
-add %ecx, %esi
-#SCALAR REF
-mov %esi, -20
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
-#ADD STATEMENT
-add %esi, %ecx
-#PAREN CONVERT
-push %esi
-fild dword ptr [%esp]
-add %esp, 4
-sub %esp, 4
-fstp dword ptr [%esp]
-pop %esi
-
-push %esi
-fld dword ptr [%esp]
-add %esp, 4
-sub %esp, 8
-fstp qword ptr [%esp]
-push offset flat:.flt_format
-call printf
-add %esp,12
-
-
 #ADD STATEMENT
 push %ebx
 fld dword ptr [%esp]
@@ -185,8 +212,48 @@ sub %esp, 4
 fstp dword ptr [%esp]
 
 pop %esi
-#WRITE STATEMENT
+#SCALAR REF
+mov %ebx, -28
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
+#SCALAR REF
+mov %ecx, -32
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+imul %ebx, %ecx
+#SCALAR REF
+mov %ecx, -24
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+#ADD STATEMENT
+add %ecx, %ebx
+#SCALAR REF
+mov %ebx, -20
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
+#ADD STATEMENT
+add %ebx, %ecx
+#PAREN CONVERT
+push %ebx
+fild dword ptr [%esp]
+add %esp, 4
+sub %esp, 4
+fstp dword ptr [%esp]
+pop %ebx
+#ADD STATEMENT
 push %esi
+fld dword ptr [%esp]
+add %esp, 4
+push %ebx
+fld dword ptr [%esp]
+add %esp, 4
+fadd %st, %st(1)
+sub %esp, 4
+fstp dword ptr [%esp]
+
+pop %ebx
+#WRITE STATEMENT
+push %ebx
 fld dword ptr [%esp]
 add %esp, 4
 sub %esp, 8
@@ -194,6 +261,37 @@ fstp qword ptr [%esp]
 push offset flat:.flt_format
 call printf
 add %esp,12
+
+#ASSIGNMENT
+mov %ebx, -36
+add %ebx, %ebp
+#SCALAR REF
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+#SCALAR REF
+mov %ecx, -8
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+#LESS THAN
+cmp %esi, %ecx
+jg less0
+mov %esi, 1
+jmp continue0
+less0:
+mov %esi, 0
+continue0:
+mov dword ptr [%ebx], %esi
+
+#SCALAR REF
+mov %ebx, -36
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
+#WRITE STATEMENT
+push %ebx
+push offset flat:.int_format
+call printf
+add %esp,8
 
 leave
 ret

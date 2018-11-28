@@ -34,9 +34,11 @@ add %ebx, %ebp
 mov %esi, 122
 mov dword ptr [%ebx], %esi
 
+#SCALAR REF
 mov %ebx, -28
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
+#SCALAR REF
 mov %esi, -32
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
@@ -54,9 +56,11 @@ push offset flat:.int_format
 call printf
 add %esp,8
 
+#SCALAR REF
 mov %ebx, -28
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
+#SCALAR REF
 mov %esi, -32
 add %esi, %ebp
 mov %esi, dword ptr [%esi]

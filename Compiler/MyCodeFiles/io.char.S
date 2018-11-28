@@ -1,5 +1,6 @@
 .intel_syntax
 .section .rodata
+.__str0: .string "testcase First completed***************"
 .int_format:
 	.string "%d\12\0"
 .str_format:
@@ -26,7 +27,7 @@ sub %esp, 4
 mov %ebx, -4
 add %ebx, %ebp
 push %ebx
-push offset flat:.int_in_format
+push offset flat:.char_in_format
 call scanf
 add %esp,8
 
@@ -36,24 +37,13 @@ add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #WRITE STATEMENT
 push %ebx
-push offset flat:.int_format
+push offset flat:.char_format
 call printf
 add %esp,8
 
-mov %ebx, 1
+push offset flat:.__str0
 #WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-mov %ebx, 2
-mov %esi, 1
-#ADD STATEMENT
-add %esi, %ebx
-#WRITE STATEMENT
-push %esi
-push offset flat:.int_format
+push offset flat:.str_format
 call printf
 add %esp,8
 

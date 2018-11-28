@@ -1,5 +1,7 @@
 .intel_syntax
 .section .rodata
+.__flt0: .float 1.100000
+.__flt1: .float 110000.000000
 .int_format:
 	.string "%d\12\0"
 .str_format:
@@ -26,7 +28,7 @@ sub %esp, 4
 mov %ebx, -4
 add %ebx, %ebp
 push %ebx
-push offset flat:.int_in_format
+push offset flat:.flt_in_format
 call scanf
 add %esp,8
 
@@ -36,26 +38,43 @@ add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #WRITE STATEMENT
 push %ebx
-push offset flat:.int_format
+fld dword ptr [%esp]
+add %esp, 4
+sub %esp, 8
+fstp qword ptr [%esp]
+push offset flat:.flt_format
 call printf
-add %esp,8
+add %esp,12
 
-mov %ebx, 1
+#FLOAT CONSTANT
+fld dword ptr .__flt0
+sub %esp, 4
+fstp dword ptr [%esp]
+pop %ebx
 #WRITE STATEMENT
 push %ebx
-push offset flat:.int_format
+fld dword ptr [%esp]
+add %esp, 4
+sub %esp, 8
+fstp qword ptr [%esp]
+push offset flat:.flt_format
 call printf
-add %esp,8
+add %esp,12
 
-mov %ebx, 2
-mov %esi, 1
-#ADD STATEMENT
-add %esi, %ebx
+#FLOAT CONSTANT
+fld dword ptr .__flt1
+sub %esp, 4
+fstp dword ptr [%esp]
+pop %ebx
 #WRITE STATEMENT
-push %esi
-push offset flat:.int_format
+push %ebx
+fld dword ptr [%esp]
+add %esp, 4
+sub %esp, 8
+fstp qword ptr [%esp]
+push offset flat:.flt_format
 call printf
-add %esp,8
+add %esp,12
 
 leave
 ret

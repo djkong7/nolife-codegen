@@ -30,58 +30,59 @@ call printf
 add %esp,8
 
 #READ STATEMENT
-mov %esi, -4
-add %esi, %ebp
-push %esi
+mov %ebx, -4
+add %ebx, %ebp
+push %ebx
 push offset flat:.int_in_format
 call scanf
 add %esp,8
 
 #CASE STATEMENT
-mov %esi, -4
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
+#SCALAR REF
+mov %ebx, -4
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
 case0:
-mov %ecx, 1
-cmp %esi, %ecx
+mov %esi, 1
+cmp %ebx, %esi
 je case0code
-mov %ecx, 2
-cmp %esi, %ecx
+mov %esi, 2
+cmp %ebx, %esi
 je case0code
 jmp case1
 case0code:
-mov %ecx, 0
+mov %esi, 0
 #WRITE STATEMENT
-push %ecx
+push %esi
 push offset flat:.int_format
 call printf
 add %esp,8
 jmp case3
 case1:
-mov %ecx, 3
-cmp %esi, %ecx
+mov %esi, 3
+cmp %ebx, %esi
 je case1code
-mov %ecx, 4
-cmp %esi, %ecx
+mov %esi, 4
+cmp %ebx, %esi
 je case1code
 jmp case2
 case1code:
-mov %ecx, 1
+mov %esi, 1
 #WRITE STATEMENT
-push %ecx
+push %esi
 push offset flat:.int_format
 call printf
 add %esp,8
 jmp case3
 case2:
-mov %ecx, 5
-cmp %esi, %ecx
+mov %esi, 5
+cmp %ebx, %esi
 je case2code
 jmp case3
 case2code:
-mov %ecx, 2
+mov %esi, 2
 #WRITE STATEMENT
-push %ecx
+push %esi
 push offset flat:.int_format
 call printf
 add %esp,8

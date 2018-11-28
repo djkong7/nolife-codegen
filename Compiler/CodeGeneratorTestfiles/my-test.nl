@@ -1,18 +1,16 @@
 {*********************************************************
-This file test all types of expressions.
+
+This testcase performs simple test on input and output.
+
 *********************************************************}
 
-PROGRAM Expr;
- VAR a,b,c,d:FLOAT;
-     i,j,k,l,m:INTEGER;
-
-
+PROGRAM inputoutput;
+ VAR a:INTEGER;
 
 BEGIN
 
-
-	a:=1.1;
-	WRITE(a)
-
+	READ(a); WRITE(a);
+	WRITE(1); 
+	WRITE(1+2)
 
 END

@@ -46,20 +46,26 @@ add %ebx, %ebp
 mov %esi, 4
 mov dword ptr [%ebx], %esi
 
-mov %ebx, -4
+#SCALAR REF
+mov %ebx, -12
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
+#SCALAR REF
+mov %esi, -16
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+imul %ebx, %esi
+#SCALAR REF
 mov %esi, -8
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
-mov %ecx, -12
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-mov %edi, -16
-add %edi, %ebp
-mov %edi, dword ptr [%edi]
-imul %ecx, %edi
-add %esi, %ecx
+#ADD STATEMENT
+add %esi, %ebx
+#SCALAR REF
+mov %ebx, -4
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
+#ADD STATEMENT
 add %ebx, %esi
 #WRITE STATEMENT
 push %ebx
