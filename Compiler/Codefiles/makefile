@@ -1,2 +1,2 @@
 all:
-	gcc -m32 io.char.S -o test
+	gcc my_test.S -o t

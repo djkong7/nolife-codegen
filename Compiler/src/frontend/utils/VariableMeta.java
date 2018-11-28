@@ -4,6 +4,12 @@ public class VariableMeta {
 	
 	public int type;
 	public int offset;
+	
+	
+	public int intMin;
+	public int intMax;
+
+	
 	public boolean isString;
 	public boolean isFloat;
 	public String stringVal;
@@ -16,6 +22,8 @@ public class VariableMeta {
 		isString = false;
 		isFloat = false;
 		staticLocation = "";
+		intMin = -1;
+		intMax = -1;
 	}
 	
 	

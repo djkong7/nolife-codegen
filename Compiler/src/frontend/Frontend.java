@@ -18,7 +18,7 @@ import frontend.visitor.TypeCheckVisitor;
 
 public abstract class Frontend {
 
-	public static String fileName = "CodeGeneratorTestfiles/io.char.nl"; // the name of the input file
+	public static String fileName = "CodeGeneratorTestfiles/my-test.nl"; // the name of the input file
 
 	public static boolean generateInterpreterCode = false;
 
@@ -35,23 +35,12 @@ public abstract class Frontend {
 		boolean generateSource = false;
 		Frontend frontend = null;
 
-		for (int i = 0; i < args.length - 1; i++) {
-			if (args[i].equals("-nolife"))
-				frontend = new NolifeFrontend();
-			/*else if (args[i].equals("-C")) {
-				frontend = new CFrontend();
-			}*/ else if (args[i].equals("-source"))
-				generateSource = true;
+		if(args.length > 0) {
+			fileName = args[0];
 		}
 
-		if (frontend == null) {
-			frontend = new NolifeFrontend();
-			//generateSource = true;
-		}
-			
-			
-
-		//fileName = new String(args[args.length - 1]);
+		
+		frontend = new NolifeFrontend();
 
 		// set up the parser and scanner with the appropriate file
 		// name
@@ -70,9 +59,9 @@ public abstract class Frontend {
 		
 		PrintASTVisitor print = new PrintASTVisitor();
 		ast.getRoot().accept(print);
-		System.out.println(print.getSrc());
+		//System.out.println(print.getSrc());
 
-		//ast.typeCheck();
+		ast.typeCheck();
 		
 		StackAllocationVisitor alloc = new StackAllocationVisitor();
 		HashMap<String,HashMap<String, VariableMeta>> tables = (HashMap<String, HashMap<String, VariableMeta>>) ast.getRoot().accept(alloc);

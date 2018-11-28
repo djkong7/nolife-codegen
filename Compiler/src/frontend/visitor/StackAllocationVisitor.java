@@ -20,7 +20,7 @@ public class StackAllocationVisitor implements ASTVisitor{
 	}
 	
 	private void addToOffsetStack(int size) {
-		offsetStack.push(offsetStack.pop() + size*4);
+		offsetStack.push(offsetStack.pop() - size*4);
 	}
 	
 	private void visitChildren(ASTNode n) {
@@ -56,7 +56,7 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(AssignmentStatementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -74,7 +74,15 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(CharacterDimensionNode n) {
-		// TODO Auto-generated method stub
+		// This is one less than the actual size because
+		// the extra is allocated in VarDeclNode
+		addToOffsetStack((n.getUpperBound() - n.getLowerBound()));
+		for (VariableMeta var : symTable.values()) {
+			if (var.type == -1) {
+				var.intMin = n.getLowerBound();
+				var.intMax = n.getUpperBound();
+			}
+		}
 		return null;
 	}
 
@@ -104,7 +112,10 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(FloatConstNode n) {
-		// TODO Auto-generated method stub
+		VariableMeta temp = new VariableMeta();
+		temp.floatVal = n.getValue();
+		temp.isFloat = true;
+		symTable.put(Float.toString(n.getValue()), temp);
 		return null;
 	}
 
@@ -147,9 +158,14 @@ public class StackAllocationVisitor implements ASTVisitor{
 	@Override
 	public Object visit(IntegerDimensionNode n) {
 		//This is one less than the actual size because
-		//the extra was already allocated in VarDeclNode
+		//the extra is allocated in VarDeclNode
 		addToOffsetStack((n.getUpperBound()-n.getLowerBound()));
-		
+		for(VariableMeta var : symTable.values()) {
+			if(var.type == -1) {
+				var.intMin = n.getLowerBound();
+				var.intMax = n.getUpperBound();
+			}
+		}
 		return null;
 	}
 
@@ -229,7 +245,7 @@ public class StackAllocationVisitor implements ASTVisitor{
 	public Object visit(ProcedureDeclNode n) {
 		symTable = new HashMap<String, VariableMeta>();
 		funcSymTables.put(n.getLabel(), symTable);
-		offsetStack.push(0);
+		offsetStack.push(-4);
 		visitChildren(n);
 		return null;
 	}
@@ -244,7 +260,7 @@ public class StackAllocationVisitor implements ASTVisitor{
 	public Object visit(ProgramNode n) {
 		symTable = new HashMap<String, VariableMeta>();
 		funcSymTables.put("global", symTable);
-		offsetStack.push(0);
+		offsetStack.push(-4);
 		visitChildren(n);
 		return funcSymTables;
 	}
@@ -326,15 +342,20 @@ public class StackAllocationVisitor implements ASTVisitor{
 	public Object visit(VariableDeclarationNode n) {
 		for(String var : n.getVariableList()) {
 			VariableMeta temp = new VariableMeta();
+			symTable.put(var, temp);
+			visitChildren(n);
+			
 			//Set offset value
 			temp.offset = offsetStack.peek();
 			addToOffsetStack(1);
+
 			
-			symTable.put(var, temp);
+			
+			
 		}
 		
 		
-		visitChildren(n);
+		
 		return null;
 	}
 

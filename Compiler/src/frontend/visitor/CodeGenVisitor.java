@@ -1,441 +1,661 @@
 package frontend.visitor;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import frontend.ast.ASTNode;
-import frontend.ast.AddExpressionNode;
-import frontend.ast.AndExpressionNode;
-import frontend.ast.ArrayReferenceNode;
-import frontend.ast.ArrayTypeNode;
-import frontend.ast.AssignmentStatementNode;
-import frontend.ast.CaseElementListNode;
-import frontend.ast.CaseElementNode;
-import frontend.ast.CaseStatementNode;
-import frontend.ast.CharacterDimensionNode;
-import frontend.ast.CharacterNode;
-import frontend.ast.CompoundStatementNode;
-import frontend.ast.DivExpressionNode;
-import frontend.ast.EqualExpressionNode;
-import frontend.ast.ExpressionListNode;
-import frontend.ast.FloatConstNode;
-import frontend.ast.FunctionDeclNode;
-import frontend.ast.FunctionInvocationNode;
-import frontend.ast.GreaterEqualExpressionNode;
-import frontend.ast.GreaterThanExpressionNode;
-import frontend.ast.IfStatementNode;
-import frontend.ast.IntegerConstNode;
-import frontend.ast.IntegerDimensionNode;
-import frontend.ast.InvocationNode;
-import frontend.ast.LessEqualExpressionNode;
-import frontend.ast.LessThanExpressionNode;
-import frontend.ast.ModExpressionNode;
-import frontend.ast.MultiplyExpressionNode;
-import frontend.ast.NilNode;
-import frontend.ast.NotEqualExpressionNode;
-import frontend.ast.NotExpressionNode;
-import frontend.ast.OrExpressionNode;
-import frontend.ast.ParenthesisNode;
-import frontend.ast.PointerDereferenceNode;
-import frontend.ast.PointerTypeNode;
-import frontend.ast.ProcedureDeclNode;
-import frontend.ast.ProcedureInvocationNode;
-import frontend.ast.ProgramNode;
-import frontend.ast.ReadStatementNode;
-import frontend.ast.RecordDeclListNode;
-import frontend.ast.RecordDeclarationNode;
-import frontend.ast.RecordElementListNode;
-import frontend.ast.RecordElementNode;
-import frontend.ast.RecordInstantiationNode;
-import frontend.ast.RecordReferenceNode;
-import frontend.ast.RecordTypeNode;
-import frontend.ast.ReturnStatementNode;
-import frontend.ast.ScalarReferenceNode;
-import frontend.ast.StandardTypeNode;
-import frontend.ast.StringNode;
-import frontend.ast.SubProgramDeclListNode;
-import frontend.ast.SubtractExpressionNode;
-import frontend.ast.VariableDeclarationListNode;
-import frontend.ast.VariableDeclarationNode;
-import frontend.ast.WhileStatementNode;
-import frontend.ast.WriteStatementNode;
+import frontend.ast.*;
 import frontend.utils.VariableMeta;
 
-public class CodeGenVisitor implements ASTVisitor{
+public class CodeGenVisitor implements ASTVisitor {
 	
-	private HashMap<String,HashMap<String, VariableMeta>> funcSymTables;
+	private int type;
+
+	private HashMap<String, HashMap<String, VariableMeta>> funcSymTables;
+	private HashMap<String, VariableMeta> curSymTable;
+
+	// Map holding the different registers that can be used and
+	// whether or not they are being used.
+	private Map<String, Boolean> register_map = new HashMap<String, Boolean>();
 	
-	public CodeGenVisitor(HashMap<String,HashMap<String, VariableMeta>> in) {
+	private int continueCounter;
+	private int greaterCounter;
+	private int falseCounter;
+	
+
+	public CodeGenVisitor(HashMap<String, HashMap<String, VariableMeta>> in) {
 		funcSymTables = in;
+		curSymTable = null;
+		type = -1;
+		
+		// Initializer for the register map. No registers are being used at the
+		// beginning.
+		register_map.put("%ebx", false);
+		register_map.put("%ecx", false);
+		// register_map.put("%edx",false);
+		register_map.put("%esi", false);
+		register_map.put("%edi", false);
+		
+		continueCounter = 0;
+		greaterCounter = 0;
+		falseCounter = 0;
 	}
 	
+	/**
+	*Gets a free register from the register map.
+	*@return a string that is the name of the free register
+	*/
+	public String get_free_register() {
+		for(Map.Entry<String,Boolean> entry : register_map.entrySet()) { 
+			if(entry.getValue() == false) { 
+				register_map.replace(entry.getKey(),true);
+				return entry.getKey();
+			}
+		}
+		throw new ArrayIndexOutOfBoundsException("No free registers");
+	}
+
+	/**
+	*Frees a register being used by program
+	*@param the name of the register to be freed
+	*/
+	public void free_register(String register) {
+		register_map.replace(register,false);
+	}
+
 	private void visitChildren(ASTNode n) {
-		for(ASTNode child : n.getChildren()) {
-			if(child != null)
+		for (ASTNode child : n.getChildren()) {
+			if (child != null)
 				child.accept(this);
 		}
 	}
 
 	@Override
 	public Object visit(AddExpressionNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		String reg = (String)n.getLeftOperand().accept(this);
+		String reg2 = (String)n.getRightOperand().accept(this);
+		System.out.printf("add %s, %s\n", reg, reg2);
+		free_register(reg2);
+		return reg;
 	}
 
 	@Override
 	public Object visit(ArrayReferenceNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println("#ARRAY REFERENCE");
+		VariableMeta temp = curSymTable.get(n.getLabel());
+		int offset = temp.offset;
+		//Get value to add to array base address.
+		int arrayOffset = 0;
+		int val;
+		if(n.getChild(0) instanceof IntegerConstNode){
+			val = ((IntegerConstNode)n.getChild(0)).getValue();
+		} else {
+			val = ((CharacterNode)n.getChild(0)).getValue();
+		}
+		arrayOffset = (temp.intMax-val)*4;
+		offset = offset - arrayOffset;
+		
+		String reg = get_free_register();
+		
+		System.out.printf("mov %s, %d\n", reg, offset);
+		System.out.printf("add %s, %%ebp\n", reg);
+		System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
+		return reg;
 	}
 
 	@Override
 	public Object visit(AndExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ArrayTypeNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(AssignmentStatementNode n) {
-		// TODO Auto-generated method stub
+		System.out.println("#ASSIGNMENT");
+		//Get the address of the variable and put
+		//it in a register
+		String reg = get_free_register();
+		VariableMeta temp = curSymTable.get(n.getLhs().getLabel());
+		int offset = temp.offset;
+		
+		//Alter offset for array indexing
+		if(n.getLhs() instanceof ArrayReferenceNode) {
+			int val;
+			if(n.getLhs().getChild(0) instanceof IntegerConstNode){
+				val = ((IntegerConstNode)n.getLhs().getChild(0)).getValue();
+			} else {
+				val = ((CharacterNode)n.getLhs().getChild(0)).getValue();
+			}
+			int arrayOffset = (temp.intMax-val)*4;
+			offset = offset-arrayOffset;
+		}
+		System.out.printf("mov %s, %d\n", reg, offset);
+		System.out.printf("add %s, %%ebp\n", reg);
+		
+		
+		//Get the value to be assigned to the variable
+		String reg2 = (String)n.getRhs().accept(this);
+		System.out.printf("mov dword ptr [%s], %s\n", reg, reg2);
+		free_register(reg);
+		free_register(reg2);
 		return null;
 	}
 
 	@Override
 	public Object visit(CaseElementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(CaseStatementNode n) {
-		// TODO Auto-generated method stub
+		System.out.println("#CASE STATEMENT");
+		int caseCounter = 0;
+		
+		String reg = (String)n.getChild(0).accept(this);
+		
+		int finish = n.getChild(1).getChildren().size();
+		for(ASTNode node : n.getChild(1).getChildren()) {
+			System.out.printf("case%d:\n", caseCounter);
+			node = (CaseElementNode)node;
+			ExpressionListNode list = (ExpressionListNode)node.getChild(0);
+			
+			for(ASTNode temp : list.getChildren()) {
+				String reg2 = (String)temp.accept(this);
+				System.out.printf("cmp %s, %s\n", reg, reg2);
+				System.out.printf("je case%dcode\n", caseCounter);
+				
+				free_register(reg2);
+			}
+			//Jump to the next cases if both fail
+			System.out.printf("jmp case%d\n", caseCounter+1);
+			//Run the case code
+			System.out.printf("case%dcode:\n", caseCounter);
+			node.getChild(1).accept(this);
+			System.out.printf("jmp case%d\n", finish);
+			caseCounter++;
+			
+			
+		}
+		System.out.printf("case%d:\n", caseCounter);
+		
+		free_register(reg);
 		return null;
 	}
 
 	@Override
 	public Object visit(CharacterDimensionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(CharacterNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		String reg = get_free_register();
+		type = n.getConvertedType();
+		System.out.printf("mov %s, %d\n", reg, (int)n.getValue());
+		return reg;
 	}
 
 	@Override
 	public Object visit(CompoundStatementNode n) {
-		// TODO Auto-generated method stub
+		for (ASTNode child : n.getChildren()) {
+			if (child != null) {
+				child.accept(this);
+				System.out.println("");
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public Object visit(DivExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(EqualExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(FloatConstNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println("#FLOAT CONSTANT");
+		String reg = get_free_register();
+		System.out.printf("mov %s, offset flat:%s\n", reg, curSymTable.get(Float.toString(n.getValue())).staticLocation);
+		return reg;
 	}
 
 	@Override
 	public Object visit(FunctionDeclNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(FunctionInvocationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(GreaterEqualExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(GreaterThanExpressionNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		String reg = (String)n.getLeftOperand().accept(this);
+		String reg2 = (String)n.getRightOperand().accept(this);
+		System.out.println("#GREATER THAN");
+		System.out.printf("cmp %s, %s\n", reg, reg2);
+		System.out.printf("jg greater%d\n", greaterCounter);
+		System.out.printf("mov %s, 0\n", reg);
+		System.out.printf("jmp continue%d\n", continueCounter);
+		System.out.printf("greater%d:\n", greaterCounter);
+		System.out.printf("mov %s, 1\n", reg);
+		System.out.printf("continue%d:\n", continueCounter);
+		greaterCounter++;
+		continueCounter++;
+		free_register(reg2);
+		
+		type = 2;
+		return reg;
 	}
 
 	@Override
 	public Object visit(IfStatementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(IntegerConstNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		String reg = get_free_register();
+		type = n.getConvertedType();
+		System.out.printf("mov %s, %d\n", reg, n.getValue());
+		return reg;
 	}
 
 	@Override
 	public Object visit(IntegerDimensionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(InvocationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(LessEqualExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(LessThanExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ModExpressionNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		String reg = (String)n.getLeftOperand().accept(this);
+		String reg2 = (String)n.getRightOperand().accept(this);
+		System.out.printf("mov %%eax, %s\n", reg);
+		System.out.print("cdq\n");
+		System.out.printf("idiv %s\n", reg2);
+		System.out.printf("mov %s, %%edx\n", reg);
+		
+		free_register(reg2);
+		return reg;
 	}
 
 	@Override
 	public Object visit(MultiplyExpressionNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		String reg = (String)n.getLeftOperand().accept(this);
+		String reg2 = (String)n.getRightOperand().accept(this);
+		System.out.printf("imul %s, %s\n", reg, reg2);
+		free_register(reg2);
+		return reg;
 	}
 
 	@Override
 	public Object visit(NilNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(NotEqualExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(NotExpressionNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		String reg = (String)n.getChild(0).accept(this);
+		System.out.println("#NOT");
+		System.out.printf("cmp %s, 0\n", reg);
+		System.out.printf("je false%d\n", falseCounter);
+		System.out.printf("mov %s, 0\n", reg);
+		System.out.printf("jmp continue%d\n", continueCounter);
+		System.out.printf("false%d:\n", falseCounter);
+		System.out.printf("mov %s, 1\n", reg);
+		System.out.printf("continue%d:\n", continueCounter);
+		falseCounter++;
+		continueCounter++;
+		return reg;
 	}
 
 	@Override
 	public Object visit(OrExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ParenthesisNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		return (String)n.getChild(0).accept(this);
 	}
 
 	@Override
 	public Object visit(PointerDereferenceNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(PointerTypeNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ProcedureDeclNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ProcedureInvocationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ProgramNode n) {
+		curSymTable = funcSymTables.get("global");
 		System.out.print(
-						".intel_syntax\n"+
-						".section .rodata\n");
-		
+				".intel_syntax\n" + 
+				".section .rodata\n");
+
 		int strCount = 0;
 		int fltCount = 0;
-		for(HashMap<String, VariableMeta> table : funcSymTables.values()) {
-			for(VariableMeta meta : table.values()) {
-				if(meta.offset == -1) {
-					if(meta.isString) {
-						System.out.printf("__str%d: .string \"%s\"\n",strCount,meta.stringVal);
-						meta.staticLocation = "__str" + strCount;
+		//Get and print all the string and float constants to the static data area.
+		for (HashMap<String, VariableMeta> table : funcSymTables.values()) {
+			for (VariableMeta meta : table.values()) {
+				if (meta.offset == -1) {
+					if (meta.isString) {
+						System.out.printf(".__str%d: .string \"%s\"\n", strCount, meta.stringVal);
+						meta.staticLocation = ".__str" + strCount;
 						strCount++;
-					}else if(meta.isFloat) {
-						System.out.printf("__flt%d: .string %f\n",fltCount,meta.floatVal);
-						meta.staticLocation = "__str" + fltCount;
+					} else if (meta.isFloat) {
+						System.out.printf(".__flt%d: .float %f\n", fltCount, meta.floatVal);
+						meta.staticLocation = ".__flt" + fltCount;
 						fltCount++;
 					}
 				}
 			}
 		}
 		
+		int stackSpace = 0;
+		for(VariableMeta meta : curSymTable.values()) {
+			if(meta.offset < stackSpace) {
+				stackSpace = meta.offset;
+			}
+		}
+		stackSpace *= -1;
+
 		System.out.println(
-							".io_format:\n"+
-							".string \"%d\\12\\0\"\n"+
-							".text\n"+
-							".globl main;\n"+
-							".type main, @function\n"+
-							"main:\n"+
-							"push %ebp\n"+
-							"mov %ebp, %esp\n"+
-							"sub %esp, 64\n");
-		
-		
+				".int_format:\n" + 
+				"\t.string \"%d\\12\\0\"\n" + 
+				".str_format:\n" + 
+				"\t.string \"%s\\12\\0\"\n" + 
+				".flt_format:\n" +
+				"\t.string \"%f\\12\\0\"\n" +
+				".char_format:\n" +
+				"\t.string \"%c\\12\\0\"\n" +
+				
+				".int_in_format:\n" + 
+				"\t.string \"%d\"\n" + 
+				".flt_in_format:\n" +
+				"\t.string \"%f\"\n" +
+				".char_in_format:\n" +
+				"\t.string \"%c\"\n" +
+				
+				".text\n" + 
+				".globl main;\n" + 
+				".type main, @function\n" + 
+				"main:\n" + 
+				"push %ebp\n" + 
+				"mov %ebp, %esp\n" + 
+				"sub %esp, " + (stackSpace) + "\n");
+
 		visitChildren(n);
+		System.out.println("leave\nret\n");
 		return null;
 	}
 
 	@Override
 	public Object visit(ReadStatementNode n) {
-		// TODO Auto-generated method stub
+		System.out.println("#READ STATEMENT");
+		
+		//Get the address of the variable and put
+		//it in a register
+		String reg = get_free_register();
+		VariableMeta temp = curSymTable.get(n.getChild(0).getLabel());
+		int offset = temp.offset;
+		
+		//Alter offset for array indexing
+		if(n.getChild(0) instanceof ArrayReferenceNode) {
+			int val;
+			if(n.getChild(0).getChild(0) instanceof IntegerConstNode){
+				val = ((IntegerConstNode)n.getChild(0).getChild(0)).getValue();
+			} else {
+				val = ((CharacterNode)n.getChild(0).getChild(0)).getValue();
+			}
+			int arrayOffset = (temp.intMax-val)*4;
+			offset = offset-arrayOffset;
+		}
+		System.out.printf("mov %s, %d\n", reg, offset);
+		System.out.printf("add %s, %%ebp\n", reg);
+		System.out.printf("push %s\n", reg);
+		
+		if(n.getChild(0).getConvertedType() == 3){
+			System.out.println("push offset flat:.flt_in_format");
+		} else if(n.getChild(0).getConvertedType() == 2) {
+			System.out.println("push offset flat:.int_in_format");
+		} else if(n.getChild(0).getConvertedType() == 1) {
+			System.out.println("push offset flat:.char_in_format");
+		}
+		free_register(reg);
+		
+		System.out.println("call scanf\n" +
+							"add %esp,8");
+		
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordDeclarationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordElementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordInstantiationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordReferenceNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordTypeNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ReturnStatementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
+	//Put the value of the variable in a register and
+	//return that register string
 	public Object visit(ScalarReferenceNode n) {
-		// TODO Auto-generated method stub
-		return null;
+		type = n.getConvertedType();
+		String reg = get_free_register();
+		System.out.printf("mov %s, %d\n", reg, curSymTable.get(n.getLabel()).offset);
+		System.out.printf("add %s, %%ebp\n", reg);
+		System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
+		return reg;
 	}
 
 	@Override
 	public Object visit(StandardTypeNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(StringNode n) {
-		// TODO Auto-generated method stub
+		String reg = get_free_register();
+		type = n.getConvertedType();
+		System.out.printf("push offset flat:%s\n",curSymTable.get(n.getString()).staticLocation);
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(SubtractExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(VariableDeclarationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(WhileStatementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(WriteStatementNode n) {
-		// TODO Auto-generated method stub
+		String reg;
+		type = n.getChild(0).getConvertedType();
+		if(type == 3) {
+			reg = get_free_register();
+			System.out.printf("mov %s, %d\n", reg, curSymTable.get(n.getChild(0).getLabel()).offset);
+			System.out.printf("add %s, %%ebp\n", reg);
+		}else {
+			reg = (String)n.getChild(0).accept(this);
+		}
+		
+		System.out.println("#WRITE STATEMENT");
+		if(type == 4) {
+			System.out.println("push offset flat:.str_format");
+		} else if(type == 3){
+			
+			System.out.printf("fld dword ptr [%s]\n", reg);
+			System.out.println("sub %esp, 8");
+			System.out.println("fstp qword ptr [%esp]");
+			
+			System.out.println("push offset flat:.flt_format");
+		} else if(type == 2) {
+			System.out.printf("push %s\n", reg);
+			System.out.println("push offset flat:.int_format");
+		} else if(type == 1) {
+			System.out.printf("push %s\n", reg);
+			System.out.println("push offset flat:.char_format");
+		}
+		free_register(reg);
+		
+		if(type == 3){
+			System.out.println("call printf\n" +
+					"add %esp,12");
+		} else {
+			System.out.println("call printf\n" +
+					"add %esp,8");
+		}
+		
+		
+		//free_register(reg);
 		return null;
 	}
 
 	@Override
 	public Object visit(ExpressionListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(CaseElementListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(VariableDeclarationListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordDeclListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(SubProgramDeclListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordElementListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 }

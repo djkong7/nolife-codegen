@@ -9,7 +9,7 @@ PROGRAM inputoutput;
 
 BEGIN
 
-	READ(c); WRITE(c);
+	READ(c); {*WRITE(c);*}
 	WRITE('testcase First completed***************')
 
 END
