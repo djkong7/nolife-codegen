@@ -32,19 +32,19 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(AddExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ArrayReferenceNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(AndExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -62,13 +62,13 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(CaseElementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(CaseStatementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -88,7 +88,7 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(CharacterNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -100,13 +100,13 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(DivExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(EqualExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -130,31 +130,31 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(FunctionInvocationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(GreaterEqualExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(GreaterThanExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(IfStatementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(IntegerConstNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -174,73 +174,73 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(InvocationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(LessEqualExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(LessThanExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ModExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(MultiplyExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(NilNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(NotEqualExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(NotExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(OrExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ParenthesisNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(PointerDereferenceNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(PointerTypeNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -249,13 +249,19 @@ public class StackAllocationVisitor implements ASTVisitor{
 		symTable = new HashMap<String, VariableMeta>();
 		funcSymTables.put(n.getLabel(), symTable);
 		offsetStack.push(-4);
-		visitChildren(n);
+		
+		offsetStack.push(8);
+		n.getChild(0).accept(this);
+		offsetStack.pop();
+		
+		n.getChild(2).accept(this);
+		n.getChild(3).accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visit(ProcedureInvocationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -276,43 +282,43 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(RecordDeclarationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordElementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordInstantiationNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordReferenceNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(RecordTypeNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ReturnStatementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(ScalarReferenceNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -350,10 +356,11 @@ public class StackAllocationVisitor implements ASTVisitor{
 			
 			//Set offset value
 			temp.offset = offsetStack.peek();
-			addToOffsetStack(1);
-
-			
-			
+			if(temp.offset > 0) {
+				addToOffsetStack(-1);
+			} else {
+				addToOffsetStack(1);
+			}
 			
 		}
 		
@@ -364,7 +371,7 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(WhileStatementNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -376,13 +383,13 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(ExpressionListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
 	@Override
 	public Object visit(CaseElementListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -394,7 +401,7 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(RecordDeclListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
@@ -406,7 +413,7 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(RecordElementListNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 

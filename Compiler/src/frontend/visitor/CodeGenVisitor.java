@@ -12,6 +12,9 @@ public class CodeGenVisitor implements ASTVisitor {
 
 	private HashMap<String, HashMap<String, VariableMeta>> funcSymTables;
 	private HashMap<String, VariableMeta> curSymTable;
+	
+	private int compilerTempNext;
+	private static final int compilerTempExtraSpace = 32;
 
 	// Map holding the different registers that can be used and
 	// whether or not they are being used.
@@ -37,7 +40,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		//register_map.put("%eax", false);
 		register_map.put("%ebx", false);
 		register_map.put("%ecx", false);
-		// register_map.put("%edx",false);
+		register_map.put("%edx",false);
 		register_map.put("%esi", false);
 		register_map.put("%edi", false);
 		
@@ -86,8 +89,9 @@ public class CodeGenVisitor implements ASTVisitor {
 		
 		String reg2 = null;
 		String reg = null;
-		reg2 = (String)n.getRightOperand().accept(this);
 		reg = (String)n.getLeftOperand().accept(this);
+		reg2 = (String)n.getRightOperand().accept(this);
+		
 		System.out.println("#ADD STATEMENT");
 		if(n.getConvertedType() == 3) {
 			System.out.printf("push %s\n", reg2);
@@ -183,6 +187,10 @@ public class CodeGenVisitor implements ASTVisitor {
 		}
 		System.out.printf("add %s, %%ebp\n", reg);
 		
+		if(offset > 0) {
+			System.out.println("#TO PARAMETER");
+			System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
+		}
 		
 		//Get the value to be assigned to the variable
 		reg2 = (String)n.getRhs().accept(this);
@@ -284,7 +292,14 @@ public class CodeGenVisitor implements ASTVisitor {
 		type = n.getConvertedType();
 		String reg = get_free_register();
 		System.out.println("#FLOAT CONSTANT");
-		System.out.printf("fld dword ptr %s\n", curSymTable.get(Float.toString(n.getValue())).staticLocation);
+		
+		//Find the info
+		VariableMeta info = curSymTable.get(Float.toString(n.getValue()));
+		if(info == null) {
+			info = funcSymTables.get("global").get(Float.toString(n.getValue()));
+		}
+		
+		System.out.printf("fld dword ptr %s\n", info.staticLocation);
 		System.out.println("sub %esp, 4");
 		System.out.println("fstp dword ptr [%esp]");
 		System.out.printf("pop %s\n", reg);
@@ -302,6 +317,8 @@ public class CodeGenVisitor implements ASTVisitor {
 				stackSpace = meta.offset;
 			}
 		}
+		compilerTempNext = stackSpace - 4;
+		stackSpace -= compilerTempExtraSpace;
 		stackSpace *= -1;
 
 		System.out.printf( 
@@ -321,7 +338,7 @@ public class CodeGenVisitor implements ASTVisitor {
 	public Object visit(FunctionInvocationNode n) {
 		System.out.println("#FUNCTION INVOCATION");
 		System.out.println("#SAVE THOSE REGISTERS");
-		System.out.println("push %eax");
+		//System.out.println("push %eax");
 		System.out.println("push %ebx");
 		System.out.println("push %ecx");
 		System.out.println("push %edx");
@@ -329,13 +346,21 @@ public class CodeGenVisitor implements ASTVisitor {
 		System.out.println("push %edi");
 		System.out.println("#DO THE OTHER STUFF");
 		
-		
-		
-		
 		n.getChild(0).accept(this);
-		String reg = get_free_register();
 		
+		System.out.println("#RESTORE THOSE REGISTERS");
+		System.out.println("pop %edi");
+		System.out.println("pop %esi");
+		System.out.println("pop %edx");
+		System.out.println("pop %ecx");
+		System.out.println("pop %ebx");
+		//System.out.println("pop %eax");
+		System.out.println("#DO THE OTHER STUFF");
+		
+		String reg = get_free_register();
 		System.out.printf("mov %s, %%eax\n", reg);
+		
+		
 		return reg;
 	}
 
@@ -587,13 +612,58 @@ public class CodeGenVisitor implements ASTVisitor {
 
 	@Override
 	public Object visit(ProcedureDeclNode n) {
+		String funcName = n.getLabel();
+		curSymTable = funcSymTables.get(funcName);
+		
+		int stackSpace = 0;
+		for(VariableMeta meta : curSymTable.values()) {
+			if(meta.offset < stackSpace) {
+				stackSpace = meta.offset;
+			}
+		}
+		compilerTempNext = stackSpace - 4;
+		stackSpace -= compilerTempExtraSpace;
+		stackSpace *= -1;
+
+		System.out.printf( 
+				".globl %s;\n" + 
+				".type %s, @function\n" + 
+				"%s:\n" + 
+				"push %%ebp\n" + 
+				"mov %%ebp, %%esp\n" + 
+				"sub %%esp, " + (stackSpace) + "\n\n", funcName,funcName,funcName);
+
 		visitChildren(n);
+		System.out.println("leave\nret\n");
 		return null;
 	}
 
 	@Override
 	public Object visit(ProcedureInvocationNode n) {
-		visitChildren(n);
+		System.out.println("#FUNCTION INVOCATION");
+		System.out.println("#SAVE THOSE REGISTERS");
+		//System.out.println("push %eax");
+		System.out.println("push %ebx");
+		System.out.println("push %ecx");
+		System.out.println("push %edx");
+		System.out.println("push %esi");
+		System.out.println("push %edi");
+		System.out.println("#DO THE OTHER STUFF");
+		
+		n.getChild(0).accept(this);
+		System.out.printf("add %%esp, %d\n", ((n.getChild(0).getChild(0).getChildren().size())*4));
+		
+		System.out.println("#RESTORE THOSE REGISTERS");
+		System.out.println("pop %edi");
+		System.out.println("pop %esi");
+		System.out.println("pop %edx");
+		System.out.println("pop %ecx");
+		System.out.println("pop %ebx");
+		//System.out.println("pop %eax");
+		System.out.println("#DO THE OTHER STUFF");
+		
+		
+	
 		return null;
 	}
 
@@ -629,6 +699,8 @@ public class CodeGenVisitor implements ASTVisitor {
 				stackSpace = meta.offset;
 			}
 		}
+		compilerTempNext = stackSpace - 4;
+		stackSpace -= compilerTempExtraSpace;
 		stackSpace *= -1;
 
 		System.out.println(
@@ -748,9 +820,19 @@ public class CodeGenVisitor implements ASTVisitor {
 		System.out.println("#SCALAR REF");
 		type = n.getConvertedType();
 		String reg = get_free_register();
-		System.out.printf("mov %s, %d\n", reg, curSymTable.get(n.getLabel()).offset);
+		int offset = curSymTable.get(n.getLabel()).offset;
+		
+		System.out.printf("mov %s, %d\n", reg, offset);
 		System.out.printf("add %s, %%ebp\n", reg);
 		System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
+		
+		//Parameter double dereference
+		if(offset > 0) {
+			System.out.println("#PARAMETER REFERENCE");
+			System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
+		}
+		
+		
 		if(n.getRealType() != n.getConvertedType()) {
 			if(n.getConvertedType() == 3) {
 				System.out.printf("push %s\n", reg);
@@ -876,7 +958,27 @@ public class CodeGenVisitor implements ASTVisitor {
 
 	@Override
 	public Object visit(ExpressionListNode n) {
-		visitChildren(n);
+		String reg;
+		if(n.getParent() instanceof InvocationNode) {
+			System.out.println("#PUSH THE PARAMS");
+			for(int i = n.getChildren().size() - 1; i >= 0; i--) {
+				ASTNode temp = n.getChild(i);
+				if(temp instanceof ScalarReferenceNode) {
+					ScalarReferenceNode node = (ScalarReferenceNode)temp;
+					reg = get_free_register();
+					VariableMeta varInfo = curSymTable.get(node.getLabel());
+					int offset = varInfo.offset;
+					//Get the address of the variable and put
+					//it in a register
+					System.out.printf("mov %s, %d\n", reg, offset);
+					System.out.printf("add %s, %%ebp\n", reg);
+					System.out.printf("push %s\n", reg);
+				}
+				
+			}
+		} else {
+			visitChildren(n);
+		}
 		return null;
 	}
 
@@ -910,3 +1012,5 @@ public class CodeGenVisitor implements ASTVisitor {
 		return null;
 	}
 }
+
+

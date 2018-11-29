@@ -22,13 +22,31 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 36
 
-#READ STATEMENT
+#ASSIGNMENT
 mov %ebx, -4
 add %ebx, %ebp
+mov %esi, 10
+#FUNCTION INVOCATION
+#SAVE THOSE REGISTERS
 push %ebx
-push offset flat:.int_in_format
-call scanf
-add %esp,8
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
+#PUSH THE PARAMS
+call f
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
+mov %edx, %eax
+#ADD STATEMENT
+add %esi, %edx
+mov dword ptr [%ebx], %esi
 
 #SCALAR REF
 mov %ebx, -4
@@ -40,23 +58,18 @@ push offset flat:.int_format
 call printf
 add %esp,8
 
-mov %ebx, 1
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
+leave
+ret
+
+.globl f;
+.type f, @function
+f:
+push %ebp
+mov %ebp, %esp
+sub %esp, 32
 
 mov %ebx, 1
-mov %esi, 2
-#ADD STATEMENT
-add %ebx, %esi
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
+mov %eax, %ebx
 leave
 ret
 

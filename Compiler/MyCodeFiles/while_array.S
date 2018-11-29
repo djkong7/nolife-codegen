@@ -20,7 +20,7 @@
 main:
 push %ebp
 mov %ebp, %esp
-sub %esp, 44
+sub %esp, 76
 
 #ASSIGNMENT
 mov %ebx, -4
@@ -64,14 +64,14 @@ mov dword ptr [%ebx], %esi
 #ASSIGNMENT
 mov %ebx, -4
 add %ebx, %ebp
-mov %esi, 1
 #SCALAR REF
-mov %ecx, -4
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+mov %edx, 1
 #ADD STATEMENT
-add %ecx, %esi
-mov dword ptr [%ebx], %ecx
+add %esi, %edx
+mov dword ptr [%ebx], %esi
 
 jmp while0
 false0:
@@ -116,11 +116,11 @@ cmp %ebx, 0
 je false2
 #ARRAY REFERENCE
 #SCALAR REF
-mov %ecx, -4
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
+mov %edx, -4
+add %edx, %ebp
+mov %edx, dword ptr [%edx]
 mov %esi, 10
-sub %esi, %ecx
+sub %esi, %edx
 imul %esi, 4
 add %esi, -44
 add %esi, %ebp
@@ -144,14 +144,14 @@ continue4:
 #ASSIGNMENT
 mov %esi, -4
 add %esi, %ebp
-mov %ecx, 1
 #SCALAR REF
-mov %edi, -4
-add %edi, %ebp
-mov %edi, dword ptr [%edi]
+mov %edx, -4
+add %edx, %ebp
+mov %edx, dword ptr [%edx]
+mov %ecx, 1
 #ADD STATEMENT
-add %edi, %ecx
-mov dword ptr [%esi], %edi
+add %edx, %ecx
+mov dword ptr [%esi], %edx
 
 jmp while1
 false1:

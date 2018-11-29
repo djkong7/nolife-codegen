@@ -20,7 +20,7 @@
 main:
 push %ebp
 mov %ebp, %esp
-sub %esp, 48
+sub %esp, 80
 
 #ASSIGNMENT
 mov %ebx, -4
@@ -47,24 +47,24 @@ mov %esi, 4
 mov dword ptr [%ebx], %esi
 
 #SCALAR REF
-mov %ebx, -12
+mov %ebx, -4
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
-#SCALAR REF
-mov %esi, -16
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
-imul %ebx, %esi
 #SCALAR REF
 mov %esi, -8
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
-#ADD STATEMENT
-add %esi, %ebx
 #SCALAR REF
-mov %ebx, -4
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
+mov %edx, -12
+add %edx, %ebp
+mov %edx, dword ptr [%edx]
+#SCALAR REF
+mov %ecx, -16
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+imul %edx, %ecx
+#ADD STATEMENT
+add %esi, %edx
 #ADD STATEMENT
 add %ebx, %esi
 #WRITE STATEMENT

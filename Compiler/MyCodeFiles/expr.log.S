@@ -20,7 +20,7 @@
 main:
 push %ebp
 mov %ebp, %esp
-sub %esp, 20
+sub %esp, 52
 
 #ASSIGNMENT
 mov %ebx, -4
@@ -54,11 +54,11 @@ mov %esi, -4
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
 #SCALAR REF
-mov %ecx, -8
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
+mov %edx, -8
+add %edx, %ebp
+mov %edx, dword ptr [%edx]
 #LESS THAN
-cmp %esi, %ecx
+cmp %esi, %edx
 jge less0
 mov %esi, 1
 jmp continue0
@@ -135,11 +135,11 @@ mov %esi, -4
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
 #SCALAR REF
-mov %ecx, -8
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
+mov %edx, -8
+add %edx, %ebp
+mov %edx, dword ptr [%edx]
 #LESS THAN
-cmp %esi, %ecx
+cmp %esi, %edx
 jge less1
 mov %esi, 1
 jmp continue4
@@ -147,23 +147,23 @@ less1:
 mov %esi, 0
 continue4:
 #SCALAR REF
-mov %ecx, -12
+mov %edx, -12
+add %edx, %ebp
+mov %edx, dword ptr [%edx]
+#SCALAR REF
+mov %ecx, -16
 add %ecx, %ebp
 mov %ecx, dword ptr [%ecx]
-#SCALAR REF
-mov %edi, -16
-add %edi, %ebp
-mov %edi, dword ptr [%edi]
 #NOT EQUAL
-cmp %ecx, %edi
+cmp %edx, %ecx
 je not0
-mov %ecx, 1
+mov %edx, 1
 jmp continue5
 not0:
-mov %ecx, 0
+mov %edx, 0
 continue5:
 #AND
-cmp %esi, %ecx
+cmp %esi, %edx
 je true0
 mov %esi, 0
 jmp continue6

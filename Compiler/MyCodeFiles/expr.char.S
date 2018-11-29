@@ -20,7 +20,7 @@
 main:
 push %ebp
 mov %ebp, %esp
-sub %esp, 32
+sub %esp, 64
 
 #ASSIGNMENT
 mov %ebx, -28

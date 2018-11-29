@@ -20,7 +20,7 @@
 main:
 push %ebp
 mov %ebp, %esp
-sub %esp, 8
+sub %esp, 40
 
 #ASSIGNMENT
 mov %ebx, -4
@@ -33,12 +33,12 @@ mov %ebx, -8
 add %ebx, %ebp
 mov %esi, 1
 #SCALAR REF
-mov %ecx, -4
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
+mov %edx, -4
+add %edx, %ebp
+mov %edx, dword ptr [%edx]
 #SUBTRACT STATEMENT
-sub %ecx, %esi
-mov dword ptr [%ebx], %ecx
+sub %edx, %esi
+mov dword ptr [%ebx], %edx
 
 #SCALAR REF
 mov %ebx, -4
@@ -72,23 +72,23 @@ mov %esi, dword ptr [%esi]
 cmp %esi, 0
 je false1
 #SCALAR REF
-mov %ecx, -4
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
+mov %edx, -4
+add %edx, %ebp
+mov %edx, dword ptr [%edx]
 #IF STATEMENT
-cmp %ecx, 0
+cmp %edx, 0
 je false2
-mov %edi, 0
+mov %ecx, 0
 #WRITE STATEMENT
-push %edi
+push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
 jmp continue2
 false2:
-mov %edi, 1
+mov %ecx, 1
 #WRITE STATEMENT
-push %edi
+push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
@@ -96,9 +96,9 @@ jmp continue2
 continue2:
 jmp continue1
 false1:
-mov %edi, 0
+mov %ecx, 0
 #WRITE STATEMENT
-push %edi
+push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8

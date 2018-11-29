@@ -21,7 +21,7 @@
 main:
 push %ebp
 mov %ebp, %esp
-sub %esp, 1
+sub %esp, 33
 
 push offset flat:.__str0
 #WRITE STATEMENT
