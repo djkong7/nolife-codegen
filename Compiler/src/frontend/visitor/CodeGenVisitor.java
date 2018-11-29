@@ -1,6 +1,7 @@
 package frontend.visitor;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import frontend.ast.*;
@@ -14,17 +15,19 @@ public class CodeGenVisitor implements ASTVisitor {
 	private HashMap<String, VariableMeta> curSymTable;
 	
 	private int compilerTempNext;
+	private boolean compilerTempUsed;
+	private int numCompilerTemps;
 	private static final int compilerTempExtraSpace = 32;
 
 	// Map holding the different registers that can be used and
 	// whether or not they are being used.
-	private Map<String, Boolean> register_map = new HashMap<String, Boolean>();
+	private Map<String, Boolean> register_map = new LinkedHashMap<String, Boolean>();
 	
 	private int continueCounter;
 	private int lessCounter;
 	private int greaterCounter;
 	private int notCounter;
-	private int andCounter;
+	private int equalCounter;
 	private int falseCounter;
 	private int trueCounter;
 	private int whileCounter;
@@ -40,9 +43,10 @@ public class CodeGenVisitor implements ASTVisitor {
 		//register_map.put("%eax", false);
 		register_map.put("%ebx", false);
 		register_map.put("%ecx", false);
-		register_map.put("%edx",false);
 		register_map.put("%esi", false);
 		register_map.put("%edi", false);
+		//Put last to only be used as a last resort
+		register_map.put("%edx",false);
 		
 		continueCounter = 0;
 		lessCounter = 0;
@@ -50,8 +54,12 @@ public class CodeGenVisitor implements ASTVisitor {
 		notCounter = 0;
 		falseCounter = 0;
 		trueCounter = 0;
-		andCounter = 0;
+		equalCounter = 0;
 		whileCounter = 0;
+		
+		compilerTempNext = 0;
+		compilerTempUsed = false;
+		numCompilerTemps = 0;
 	}
 	
 	/**
@@ -75,6 +83,16 @@ public class CodeGenVisitor implements ASTVisitor {
 	public void free_register(String register) {
 		if(register != null)
 			register_map.replace(register,false);
+	}
+	
+	public void print_free_registers() {
+		System.out.println("##########FREE REGISTERS############");
+		for(Map.Entry<String,Boolean> entry : register_map.entrySet()) { 
+			if(entry.getValue() == false) { 
+				System.out.printf("#%s is free\n", entry.getKey());
+			}
+		}
+		System.out.println("####################################");
 	}
 
 	private void visitChildren(ASTNode n) {
@@ -198,7 +216,7 @@ public class CodeGenVisitor implements ASTVisitor {
 			System.out.printf("push %s\n", reg2);
 			System.out.println("fld dword ptr [%esp]");
 			System.out.println("add %esp, 4");
-			System.out.printf("fstp dword ptr [%s]", reg);
+			System.out.printf("fstp dword ptr [%s]\n", reg);
 		} else {
 			System.out.printf("mov dword ptr [%s], %s\n", reg, reg2);
 		}
@@ -283,8 +301,22 @@ public class CodeGenVisitor implements ASTVisitor {
 
 	@Override
 	public Object visit(EqualExpressionNode n) {
-		visitChildren(n);
-		return null;
+		String reg = (String)n.getLeftOperand().accept(this);
+		String reg2 = (String)n.getRightOperand().accept(this);
+		System.out.println("#EQUAL");
+		System.out.printf("cmp %s, %s\n", reg, reg2);
+		System.out.printf("je equal%d\n", equalCounter);
+		System.out.printf("mov %s, 0\n", reg);
+		System.out.printf("jmp continue%d\n", continueCounter);
+		System.out.printf("equal%d:\n", equalCounter);
+		System.out.printf("mov %s, 1\n", reg);
+		System.out.printf("continue%d:\n", continueCounter);
+		equalCounter++;
+		continueCounter++;
+		free_register(reg2);
+		
+		type = 2;
+		return reg;
 	}
 
 	@Override
@@ -498,6 +530,7 @@ public class CodeGenVisitor implements ASTVisitor {
 	public Object visit(ModExpressionNode n) {
 		String reg = (String)n.getLeftOperand().accept(this);
 		String reg2 = (String)n.getRightOperand().accept(this);
+		System.out.println("#MOD");
 		System.out.printf("mov %%eax, %s\n", reg);
 		System.out.print("cdq\n");
 		System.out.printf("idiv %s\n", reg2);
@@ -808,7 +841,7 @@ public class CodeGenVisitor implements ASTVisitor {
 	@Override
 	public Object visit(ReturnStatementNode n) {
 		String reg = (String)n.getChild(0).accept(this);
-		System.out.printf("mov %%eax, %s", reg);
+		System.out.printf("mov %%eax, %s\n", reg);
 		free_register(reg);
 		return null;
 	}
@@ -817,6 +850,7 @@ public class CodeGenVisitor implements ASTVisitor {
 	//Put the value of the variable in a register and
 	//return that register string
 	public Object visit(ScalarReferenceNode n) {
+		//print_free_registers();
 		System.out.println("#SCALAR REF");
 		type = n.getConvertedType();
 		String reg = get_free_register();
@@ -915,7 +949,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		n.getChild(1).accept(this);
 		
 		System.out.printf("jmp while%d\n", whileCounterSave);
-		System.out.printf("false%d:", falseCounterSave);
+		System.out.printf("false%d:\n", falseCounterSave);
 		
 		return null;
 	}
@@ -964,6 +998,7 @@ public class CodeGenVisitor implements ASTVisitor {
 			for(int i = n.getChildren().size() - 1; i >= 0; i--) {
 				ASTNode temp = n.getChild(i);
 				if(temp instanceof ScalarReferenceNode) {
+					System.out.println("#SCALAR REF PARAM");
 					ScalarReferenceNode node = (ScalarReferenceNode)temp;
 					reg = get_free_register();
 					VariableMeta varInfo = curSymTable.get(node.getLabel());
@@ -972,7 +1007,31 @@ public class CodeGenVisitor implements ASTVisitor {
 					//it in a register
 					System.out.printf("mov %s, %d\n", reg, offset);
 					System.out.printf("add %s, %%ebp\n", reg);
+					
+					if(offset > 0) {
+						System.out.println("#PARAM PASSED AS PARAM");
+						System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
+					}
+					
+					
 					System.out.printf("push %s\n", reg);
+					free_register(reg);
+				} else {//IntegerConstNode, SubtractExpressionNode
+					System.out.println("#OTHER PARAM");
+					reg = (String)temp.accept(this);
+					
+					compilerTempUsed = true;
+					numCompilerTemps++;
+					String reg2 = get_free_register();
+					System.out.printf("#compilerTempNext: %d\n", compilerTempNext);
+					System.out.printf("mov %s, %d\n", reg2, compilerTempNext);
+					System.out.printf("add %s, %%ebp\n", reg2);
+					System.out.printf("mov dword ptr [%s], %s\n", reg2, reg);
+					System.out.printf("push %s\n", reg2);
+					
+					compilerTempNext -= 4;
+					free_register(reg2);
+					free_register(reg);
 				}
 				
 			}
@@ -1012,5 +1071,4 @@ public class CodeGenVisitor implements ASTVisitor {
 		return null;
 	}
 }
-
 

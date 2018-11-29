@@ -43,46 +43,46 @@ mov %ebx, -4
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 case0:
-mov %esi, 1
-cmp %ebx, %esi
+mov %ecx, 1
+cmp %ebx, %ecx
 je case0code
-mov %esi, 2
-cmp %ebx, %esi
+mov %ecx, 2
+cmp %ebx, %ecx
 je case0code
 jmp case1
 case0code:
-mov %esi, 0
+mov %ecx, 0
 #WRITE STATEMENT
-push %esi
+push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
 jmp case3
 case1:
-mov %esi, 3
-cmp %ebx, %esi
+mov %ecx, 3
+cmp %ebx, %ecx
 je case1code
-mov %esi, 4
-cmp %ebx, %esi
+mov %ecx, 4
+cmp %ebx, %ecx
 je case1code
 jmp case2
 case1code:
-mov %esi, 1
+mov %ecx, 1
 #WRITE STATEMENT
-push %esi
+push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
 jmp case3
 case2:
-mov %esi, 5
-cmp %ebx, %esi
+mov %ecx, 5
+cmp %ebx, %ecx
 je case2code
 jmp case3
 case2code:
-mov %esi, 2
+mov %ecx, 2
 #WRITE STATEMENT
-push %esi
+push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8

@@ -25,20 +25,20 @@ sub %esp, 40
 #ASSIGNMENT
 mov %ebx, -4
 add %ebx, %ebp
-mov %esi, 0
-mov dword ptr [%ebx], %esi
+mov %ecx, 0
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
 mov %ebx, -8
 add %ebx, %ebp
-mov %esi, 1
+mov %ecx, 1
 #SCALAR REF
-mov %edx, -4
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
 #SUBTRACT STATEMENT
-sub %edx, %esi
-mov dword ptr [%ebx], %edx
+sub %esi, %ecx
+mov dword ptr [%ebx], %esi
 
 #SCALAR REF
 mov %ebx, -4
@@ -47,17 +47,17 @@ mov %ebx, dword ptr [%ebx]
 #IF STATEMENT
 cmp %ebx, 0
 je false0
-mov %esi, 1
+mov %ecx, 1
 #WRITE STATEMENT
-push %esi
+push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
 jmp continue0
 false0:
-mov %esi, 0
+mov %ecx, 0
 #WRITE STATEMENT
-push %esi
+push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
@@ -65,30 +65,30 @@ jmp continue0
 continue0:
 
 #SCALAR REF
-mov %esi, -8
+mov %ecx, -8
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+#IF STATEMENT
+cmp %ecx, 0
+je false1
+#SCALAR REF
+mov %esi, -4
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
 #IF STATEMENT
 cmp %esi, 0
-je false1
-#SCALAR REF
-mov %edx, -4
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
-#IF STATEMENT
-cmp %edx, 0
 je false2
-mov %ecx, 0
+mov %edi, 0
 #WRITE STATEMENT
-push %ecx
+push %edi
 push offset flat:.int_format
 call printf
 add %esp,8
 jmp continue2
 false2:
-mov %ecx, 1
+mov %edi, 1
 #WRITE STATEMENT
-push %ecx
+push %edi
 push offset flat:.int_format
 call printf
 add %esp,8
@@ -96,9 +96,9 @@ jmp continue2
 continue2:
 jmp continue1
 false1:
-mov %ecx, 0
+mov %edi, 0
 #WRITE STATEMENT
-push %ecx
+push %edi
 push offset flat:.int_format
 call printf
 add %esp,8

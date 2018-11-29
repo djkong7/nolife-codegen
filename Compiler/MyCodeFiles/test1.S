@@ -25,7 +25,7 @@ sub %esp, 36
 #ASSIGNMENT
 mov %ebx, -4
 add %ebx, %ebp
-mov %esi, 10
+mov %ecx, 10
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
 push %ebx
@@ -43,10 +43,10 @@ pop %edx
 pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
-mov %edx, %eax
+mov %esi, %eax
 #ADD STATEMENT
-add %esi, %edx
-mov dword ptr [%ebx], %esi
+add %ecx, %esi
+mov dword ptr [%ebx], %ecx
 
 #SCALAR REF
 mov %ebx, -4
@@ -70,6 +70,7 @@ sub %esp, 32
 
 mov %ebx, 1
 mov %eax, %ebx
+
 leave
 ret
 

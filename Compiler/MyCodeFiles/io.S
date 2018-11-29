@@ -48,9 +48,9 @@ call printf
 add %esp,8
 
 mov %ebx, 1
-mov %esi, 2
+mov %ecx, 2
 #ADD STATEMENT
-add %ebx, %esi
+add %ebx, %ecx
 #WRITE STATEMENT
 push %ebx
 push offset flat:.int_format

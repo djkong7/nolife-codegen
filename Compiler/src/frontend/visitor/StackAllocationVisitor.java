@@ -124,7 +124,14 @@ public class StackAllocationVisitor implements ASTVisitor{
 		symTable = new HashMap<String, VariableMeta>();
 		funcSymTables.put(n.getLabel(), symTable);
 		offsetStack.push(-4);
-		visitChildren(n);
+		
+		offsetStack.push(8);
+		n.getChild(0).accept(this);
+		offsetStack.pop();
+		
+		n.getChild(1).accept(this);
+		n.getChild(2).accept(this);
+		n.getChild(3).accept(this);
 		return null;
 	}
 

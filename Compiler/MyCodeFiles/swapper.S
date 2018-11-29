@@ -61,12 +61,14 @@ push %esi
 push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
+#SCALAR REF PARAM
 mov %ebx, -8
 add %ebx, %ebp
 push %ebx
-mov %esi, -4
-add %esi, %ebp
-push %esi
+#SCALAR REF PARAM
+mov %ebx, -4
+add %ebx, %ebp
+push %ebx
 call swap
 add %esp, 8
 #RESTORE THOSE REGISTERS
@@ -78,11 +80,11 @@ pop %ebx
 #DO THE OTHER STUFF
 
 #SCALAR REF
-mov %edx, -4
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
+mov %ebx, -4
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
 #WRITE STATEMENT
-push %edx
+push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
@@ -98,60 +100,60 @@ mov %ebp, %esp
 sub %esp, 36
 
 #ASSIGNMENT
-mov %edx, -4
-add %edx, %ebp
+mov %ebx, -4
+add %ebx, %ebp
 #SCALAR REF
 mov %ecx, 8
 add %ecx, %ebp
 mov %ecx, dword ptr [%ecx]
 #PARAMETER REFERENCE
 mov %ecx, dword ptr [%ecx]
-mov dword ptr [%edx], %ecx
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
-mov %edx, 8
-add %edx, %ebp
+mov %ebx, 8
+add %ebx, %ebp
 #TO PARAMETER
-mov %edx, dword ptr [%edx]
+mov %ebx, dword ptr [%ebx]
 #SCALAR REF
 mov %ecx, 12
 add %ecx, %ebp
 mov %ecx, dword ptr [%ecx]
 #PARAMETER REFERENCE
 mov %ecx, dword ptr [%ecx]
-mov dword ptr [%edx], %ecx
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
-mov %edx, 12
-add %edx, %ebp
+mov %ebx, 12
+add %ebx, %ebp
 #TO PARAMETER
-mov %edx, dword ptr [%edx]
+mov %ebx, dword ptr [%ebx]
 #SCALAR REF
 mov %ecx, -4
 add %ecx, %ebp
 mov %ecx, dword ptr [%ecx]
-mov dword ptr [%edx], %ecx
+mov dword ptr [%ebx], %ecx
 
 #SCALAR REF
-mov %edx, 12
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
+mov %ebx, 12
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
 #PARAMETER REFERENCE
-mov %edx, dword ptr [%edx]
+mov %ebx, dword ptr [%ebx]
 #WRITE STATEMENT
-push %edx
+push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
 
 #SCALAR REF
-mov %edx, 8
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
+mov %ebx, 8
+add %ebx, %ebp
+mov %ebx, dword ptr [%ebx]
 #PARAMETER REFERENCE
-mov %edx, dword ptr [%edx]
+mov %ebx, dword ptr [%ebx]
 #WRITE STATEMENT
-push %edx
+push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8

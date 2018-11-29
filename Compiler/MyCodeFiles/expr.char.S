@@ -25,25 +25,25 @@ sub %esp, 64
 #ASSIGNMENT
 mov %ebx, -28
 add %ebx, %ebp
-mov %esi, 65
-mov dword ptr [%ebx], %esi
+mov %ecx, 65
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
 mov %ebx, -32
 add %ebx, %ebp
-mov %esi, 122
-mov dword ptr [%ebx], %esi
+mov %ecx, 122
+mov dword ptr [%ebx], %ecx
 
 #SCALAR REF
 mov %ebx, -28
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #SCALAR REF
-mov %esi, -32
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
+mov %ecx, -32
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
 #GREATER THAN
-cmp %ebx, %esi
+cmp %ebx, %ecx
 jg greater0
 mov %ebx, 0
 jmp continue0
@@ -61,11 +61,11 @@ mov %ebx, -28
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #SCALAR REF
-mov %esi, -32
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
+mov %ecx, -32
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
 #GREATER THAN
-cmp %ebx, %esi
+cmp %ebx, %ecx
 jg greater1
 mov %ebx, 0
 jmp continue1
@@ -87,19 +87,19 @@ call printf
 add %esp,8
 
 #ASSIGNMENT
-mov %esi, 100
+mov %ecx, 100
 mov %ebx, 102
-sub %ebx, %esi
+sub %ebx, %ecx
 imul %ebx, 4
 add %ebx, -24
 add %ebx, %ebp
-mov %esi, 3
-mov dword ptr [%ebx], %esi
+mov %ecx, 3
+mov dword ptr [%ebx], %ecx
 
 #ARRAY REFERENCE
-mov %esi, 100
+mov %ecx, 100
 mov %ebx, 102
-sub %ebx, %esi
+sub %ebx, %ecx
 imul %ebx, 4
 add %ebx, -24
 add %ebx, %ebp

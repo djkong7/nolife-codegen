@@ -33,11 +33,12 @@ add %ebx, %ebp
 fld dword ptr .__flt0
 sub %esp, 4
 fstp dword ptr [%esp]
-pop %esi
-push %esi
+pop %ecx
+push %ecx
 fld dword ptr [%esp]
 add %esp, 4
 fstp dword ptr [%ebx]
+
 #ASSIGNMENT
 mov %ebx, -8
 add %ebx, %ebp
@@ -45,11 +46,12 @@ add %ebx, %ebp
 fld dword ptr .__flt1
 sub %esp, 4
 fstp dword ptr [%esp]
-pop %esi
-push %esi
+pop %ecx
+push %ecx
 fld dword ptr [%esp]
 add %esp, 4
 fstp dword ptr [%ebx]
+
 #ASSIGNMENT
 mov %ebx, -12
 add %ebx, %ebp
@@ -57,11 +59,12 @@ add %ebx, %ebp
 fld dword ptr .__flt2
 sub %esp, 4
 fstp dword ptr [%esp]
-pop %esi
-push %esi
+pop %ecx
+push %ecx
 fld dword ptr [%esp]
 add %esp, 4
 fstp dword ptr [%ebx]
+
 #ASSIGNMENT
 mov %ebx, -16
 add %ebx, %ebp
@@ -69,41 +72,30 @@ add %ebx, %ebp
 fld dword ptr .__flt3
 sub %esp, 4
 fstp dword ptr [%esp]
-pop %esi
-push %esi
+pop %ecx
+push %ecx
 fld dword ptr [%esp]
 add %esp, 4
 fstp dword ptr [%ebx]
+
 #SCALAR REF
 mov %ebx, -4
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #SCALAR REF
-mov %esi, -8
+mov %ecx, -8
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+#SCALAR REF
+mov %esi, -12
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
 #SCALAR REF
-mov %edx, -12
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
-#SCALAR REF
-mov %ecx, -16
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
+mov %edi, -16
+add %edi, %ebp
+mov %edi, dword ptr [%edi]
 #ADD STATEMENT
-push %ecx
-fld dword ptr [%esp]
-add %esp, 4
-push %edx
-fld dword ptr [%esp]
-add %esp, 4
-fadd %st, %st(1)
-sub %esp, 4
-fstp dword ptr [%esp]
-
-pop %edx
-#ADD STATEMENT
-push %edx
+push %edi
 fld dword ptr [%esp]
 add %esp, 4
 push %esi
@@ -116,6 +108,18 @@ fstp dword ptr [%esp]
 pop %esi
 #ADD STATEMENT
 push %esi
+fld dword ptr [%esp]
+add %esp, 4
+push %ecx
+fld dword ptr [%esp]
+add %esp, 4
+fadd %st, %st(1)
+sub %esp, 4
+fstp dword ptr [%esp]
+
+pop %ecx
+#ADD STATEMENT
+push %ecx
 fld dword ptr [%esp]
 add %esp, 4
 push %ebx
@@ -139,48 +143,48 @@ add %esp,12
 #ASSIGNMENT
 mov %ebx, -20
 add %ebx, %ebp
-mov %esi, 1
-mov dword ptr [%ebx], %esi
+mov %ecx, 1
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
 mov %ebx, -24
 add %ebx, %ebp
-mov %esi, 2
-mov dword ptr [%ebx], %esi
+mov %ecx, 2
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
 mov %ebx, -28
 add %ebx, %ebp
-mov %esi, 3
-mov dword ptr [%ebx], %esi
+mov %ecx, 3
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
 mov %ebx, -32
 add %ebx, %ebp
-mov %esi, 4
-mov dword ptr [%ebx], %esi
+mov %ecx, 4
+mov dword ptr [%ebx], %ecx
 
 #SCALAR REF
 mov %ebx, -20
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #SCALAR REF
-mov %esi, -24
+mov %ecx, -24
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+#SCALAR REF
+mov %esi, -28
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
 #SCALAR REF
-mov %edx, -28
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
-#SCALAR REF
-mov %ecx, -32
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-imul %edx, %ecx
+mov %edi, -32
+add %edi, %ebp
+mov %edi, dword ptr [%edi]
+imul %esi, %edi
 #ADD STATEMENT
-add %esi, %edx
+add %ecx, %esi
 #ADD STATEMENT
-add %ebx, %esi
+add %ebx, %ecx
 #PAREN CONVERT
 push %ebx
 fild dword ptr [%esp]
@@ -189,47 +193,35 @@ sub %esp, 4
 fstp dword ptr [%esp]
 pop %ebx
 #SCALAR REF
-mov %esi, -4
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
-#SCALAR REF
-mov %edx, -8
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
-#SCALAR REF
-mov %ecx, -12
+mov %ecx, -4
 add %ecx, %ebp
 mov %ecx, dword ptr [%ecx]
 #SCALAR REF
-mov %edi, -16
+mov %esi, -8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+#SCALAR REF
+mov %edi, -12
 add %edi, %ebp
 mov %edi, dword ptr [%edi]
+#SCALAR REF
+mov %edx, -16
+add %edx, %ebp
+mov %edx, dword ptr [%edx]
 #ADD STATEMENT
+push %edx
+fld dword ptr [%esp]
+add %esp, 4
 push %edi
 fld dword ptr [%esp]
 add %esp, 4
-push %ecx
-fld dword ptr [%esp]
-add %esp, 4
 fadd %st, %st(1)
 sub %esp, 4
 fstp dword ptr [%esp]
 
-pop %ecx
+pop %edi
 #ADD STATEMENT
-push %ecx
-fld dword ptr [%esp]
-add %esp, 4
-push %edx
-fld dword ptr [%esp]
-add %esp, 4
-fadd %st, %st(1)
-sub %esp, 4
-fstp dword ptr [%esp]
-
-pop %edx
-#ADD STATEMENT
-push %edx
+push %edi
 fld dword ptr [%esp]
 add %esp, 4
 push %esi
@@ -242,6 +234,18 @@ fstp dword ptr [%esp]
 pop %esi
 #ADD STATEMENT
 push %esi
+fld dword ptr [%esp]
+add %esp, 4
+push %ecx
+fld dword ptr [%esp]
+add %esp, 4
+fadd %st, %st(1)
+sub %esp, 4
+fstp dword ptr [%esp]
+
+pop %ecx
+#ADD STATEMENT
+push %ecx
 fld dword ptr [%esp]
 add %esp, 4
 push %ebx
@@ -266,22 +270,22 @@ add %esp,12
 mov %ebx, -36
 add %ebx, %ebp
 #SCALAR REF
-mov %esi, -4
+mov %ecx, -4
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+#SCALAR REF
+mov %esi, -8
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
-#SCALAR REF
-mov %edx, -8
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
 #LESS THAN
-cmp %esi, %edx
+cmp %ecx, %esi
 jge less0
-mov %esi, 1
+mov %ecx, 1
 jmp continue0
 less0:
-mov %esi, 0
+mov %ecx, 0
 continue0:
-mov dword ptr [%ebx], %esi
+mov dword ptr [%ebx], %ecx
 
 #SCALAR REF
 mov %ebx, -36

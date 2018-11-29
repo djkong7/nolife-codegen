@@ -25,8 +25,8 @@ sub %esp, 40
 #ASSIGNMENT
 mov %ebx, -4
 add %ebx, %ebp
-mov %esi, 1
-mov dword ptr [%ebx], %esi
+mov %ecx, 1
+mov dword ptr [%ebx], %ecx
 
 #WHILE STATEMENT
 while0:
@@ -34,9 +34,9 @@ while0:
 mov %ebx, -4
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
-mov %esi, 10
+mov %ecx, 10
 #LESS EQUAL THAN
-cmp %ebx, %esi
+cmp %ebx, %ecx
 jg less0
 mov %ebx, 1
 jmp continue1
@@ -59,16 +59,17 @@ add %esp,8
 mov %ebx, -4
 add %ebx, %ebp
 #SCALAR REF
-mov %esi, -4
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
-mov %edx, 1
+mov %ecx, -4
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+mov %esi, 1
 #ADD STATEMENT
-add %esi, %edx
-mov dword ptr [%ebx], %esi
+add %ecx, %esi
+mov dword ptr [%ebx], %ecx
 
 jmp while0
 false0:
+
 #SCALAR REF
 mov %ebx, -4
 add %ebx, %ebp
@@ -82,8 +83,8 @@ add %esp,8
 #ASSIGNMENT
 mov %ebx, -8
 add %ebx, %ebp
-mov %esi, 1
-mov dword ptr [%ebx], %esi
+mov %ecx, 1
+mov dword ptr [%ebx], %ecx
 
 #WHILE STATEMENT
 while1:
@@ -91,9 +92,9 @@ while1:
 mov %ebx, -8
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
-mov %esi, 10
+mov %ecx, 10
 #LESS EQUAL THAN
-cmp %ebx, %esi
+cmp %ebx, %ecx
 jg less1
 mov %ebx, 1
 jmp continue3
@@ -105,8 +106,8 @@ je false1
 #ASSIGNMENT
 mov %ebx, -4
 add %ebx, %ebp
-mov %esi, 1
-mov dword ptr [%ebx], %esi
+mov %ecx, 1
+mov dword ptr [%ebx], %ecx
 
 #WHILE STATEMENT
 while2:
@@ -114,9 +115,9 @@ while2:
 mov %ebx, -4
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
-mov %esi, 10
+mov %ecx, 10
 #LESS EQUAL THAN
-cmp %ebx, %esi
+cmp %ebx, %ecx
 jg less2
 mov %ebx, 1
 jmp continue5
@@ -130,10 +131,10 @@ mov %ebx, -4
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #SCALAR REF
-mov %esi, -8
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
-imul %ebx, %esi
+mov %ecx, -8
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+imul %ebx, %ecx
 #WRITE STATEMENT
 push %ebx
 push offset flat:.int_format
@@ -144,30 +145,32 @@ add %esp,8
 mov %ebx, -4
 add %ebx, %ebp
 #SCALAR REF
-mov %esi, -4
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
-mov %edx, 1
+mov %ecx, -4
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+mov %esi, 1
 #ADD STATEMENT
-add %esi, %edx
-mov dword ptr [%ebx], %esi
+add %ecx, %esi
+mov dword ptr [%ebx], %ecx
 
 jmp while2
 false2:
+
 #ASSIGNMENT
 mov %ebx, -8
 add %ebx, %ebp
 #SCALAR REF
-mov %esi, -8
-add %esi, %ebp
-mov %esi, dword ptr [%esi]
-mov %edx, 1
+mov %ecx, -8
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+mov %esi, 1
 #ADD STATEMENT
-add %esi, %edx
-mov dword ptr [%ebx], %esi
+add %ecx, %esi
+mov dword ptr [%ebx], %ecx
 
 jmp while1
 false1:
+
 leave
 ret
 

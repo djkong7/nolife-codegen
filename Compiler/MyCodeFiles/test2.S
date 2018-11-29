@@ -31,7 +31,7 @@ add %ebx, %ebp
 fld dword ptr .__flt1
 sub %esp, 4
 fstp dword ptr [%esp]
-pop %esi
+pop %ecx
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
 push %ebx
@@ -49,23 +49,24 @@ pop %edx
 pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
-mov %edx, %eax
+mov %esi, %eax
 #ADD STATEMENT
-push %edx
+push %esi
 fld dword ptr [%esp]
 add %esp, 4
-push %esi
+push %ecx
 fld dword ptr [%esp]
 add %esp, 4
 fadd %st, %st(1)
 sub %esp, 4
 fstp dword ptr [%esp]
 
-pop %esi
-push %esi
+pop %ecx
+push %ecx
 fld dword ptr [%esp]
 add %esp, 4
 fstp dword ptr [%ebx]
+
 #SCALAR REF
 mov %ebx, -4
 add %ebx, %ebp
@@ -96,6 +97,7 @@ sub %esp, 4
 fstp dword ptr [%esp]
 pop %ebx
 mov %eax, %ebx
+
 leave
 ret
 

@@ -25,48 +25,48 @@ sub %esp, 80
 #ASSIGNMENT
 mov %ebx, -4
 add %ebx, %ebp
-mov %esi, 1
-mov dword ptr [%ebx], %esi
+mov %ecx, 1
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
 mov %ebx, -8
 add %ebx, %ebp
-mov %esi, 2
-mov dword ptr [%ebx], %esi
+mov %ecx, 2
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
 mov %ebx, -12
 add %ebx, %ebp
-mov %esi, 3
-mov dword ptr [%ebx], %esi
+mov %ecx, 3
+mov dword ptr [%ebx], %ecx
 
 #ASSIGNMENT
 mov %ebx, -16
 add %ebx, %ebp
-mov %esi, 4
-mov dword ptr [%ebx], %esi
+mov %ecx, 4
+mov dword ptr [%ebx], %ecx
 
 #SCALAR REF
 mov %ebx, -4
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #SCALAR REF
-mov %esi, -8
+mov %ecx, -8
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+#SCALAR REF
+mov %esi, -12
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
 #SCALAR REF
-mov %edx, -12
-add %edx, %ebp
-mov %edx, dword ptr [%edx]
-#SCALAR REF
-mov %ecx, -16
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-imul %edx, %ecx
+mov %edi, -16
+add %edi, %ebp
+mov %edi, dword ptr [%edi]
+imul %esi, %edi
 #ADD STATEMENT
-add %esi, %edx
+add %ecx, %esi
 #ADD STATEMENT
-add %ebx, %esi
+add %ebx, %ecx
 #WRITE STATEMENT
 push %ebx
 push offset flat:.int_format
@@ -74,10 +74,11 @@ call printf
 add %esp,8
 
 mov %ebx, 5
-mov %esi, 7
+mov %ecx, 7
+#MOD
 mov %eax, %ebx
 cdq
-idiv %esi
+idiv %ecx
 mov %ebx, %edx
 #WRITE STATEMENT
 push %ebx
@@ -86,19 +87,19 @@ call printf
 add %esp,8
 
 #ASSIGNMENT
-mov %esi, 5
+mov %ecx, 5
 mov %ebx, 9
-sub %ebx, %esi
+sub %ebx, %ecx
 imul %ebx, 4
 add %ebx, -48
 add %ebx, %ebp
-mov %esi, 3
-mov dword ptr [%ebx], %esi
+mov %ecx, 3
+mov dword ptr [%ebx], %ecx
 
 #ARRAY REFERENCE
-mov %esi, 5
+mov %ecx, 5
 mov %ebx, 9
-sub %ebx, %esi
+sub %ebx, %ecx
 imul %ebx, 4
 add %ebx, -48
 add %ebx, %ebp

@@ -57,7 +57,7 @@ pop %edx
 pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
-mov %esi, %eax
+mov %ecx, %eax
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
 push %ebx
@@ -75,7 +75,7 @@ pop %edx
 pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
-mov %edx, %eax
+mov %esi, %eax
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
 push %ebx
@@ -93,13 +93,13 @@ pop %edx
 pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
-mov %ecx, %eax
+mov %edi, %eax
 #ADD STATEMENT
-add %edx, %ecx
+add %esi, %edi
 #ADD STATEMENT
-add %esi, %edx
+add %ecx, %esi
 #ADD STATEMENT
-add %ebx, %esi
+add %ebx, %ecx
 #WRITE STATEMENT
 push %ebx
 push offset flat:.int_format
@@ -125,6 +125,7 @@ add %esp,8
 
 mov %ebx, 1
 mov %eax, %ebx
+
 leave
 ret
 
@@ -161,6 +162,7 @@ pop %ebx
 #DO THE OTHER STUFF
 mov %ebx, %eax
 mov %eax, %ebx
+
 leave
 ret
 
@@ -213,10 +215,11 @@ pop %edx
 pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
-mov %esi, %eax
+mov %ecx, %eax
 #ADD STATEMENT
-add %ebx, %esi
+add %ebx, %ecx
 mov %eax, %ebx
+
 leave
 ret
 
@@ -269,7 +272,7 @@ pop %edx
 pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
-mov %esi, %eax
+mov %ecx, %eax
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
 push %ebx
@@ -287,12 +290,13 @@ pop %edx
 pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
-mov %edx, %eax
+mov %esi, %eax
 #ADD STATEMENT
-add %esi, %edx
+add %ecx, %esi
 #ADD STATEMENT
-add %ebx, %esi
+add %ebx, %ecx
 mov %eax, %ebx
+
 leave
 ret
 
