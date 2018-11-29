@@ -10,7 +10,7 @@ PROGRAM Flow;
 BEGIN
 
      
-        a := 0;
+    a := 0;
 	b := a -1;
 	IF a THEN
 		WRITE(1)

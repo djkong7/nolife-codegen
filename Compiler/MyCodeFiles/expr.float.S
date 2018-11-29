@@ -275,7 +275,7 @@ add %ecx, %ebp
 mov %ecx, dword ptr [%ecx]
 #LESS THAN
 cmp %esi, %ecx
-jg less0
+jge less0
 mov %esi, 1
 jmp continue0
 less0:

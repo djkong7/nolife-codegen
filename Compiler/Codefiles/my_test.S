@@ -1,3 +1,4 @@
+
 .intel_syntax
 .section .rodata
 .int_format:
@@ -22,13 +23,37 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 4
 
-#READ STATEMENT
+#ASSIGNMENT
 mov %ebx, -4
 add %ebx, %ebp
+
+
+#WRITE STATEMENT
 push %ebx
-push offset flat:.int_in_format
-call scanf
+push offset flat:.int_format
+call printf
 add %esp,8
+
+
+
+#FUNCTION INVOCATION
+call f
+
+
+
+#WRITE STATEMENT
+push %ebx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+
+
+mov %esi, %eax
+mov %ecx, 10
+#ADD STATEMENT
+add %ecx, %esi
+mov dword ptr [%ebx], %ecx
 
 #SCALAR REF
 mov %ebx, -4
@@ -40,23 +65,19 @@ push offset flat:.int_format
 call printf
 add %esp,8
 
-mov %ebx, 1
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
+leave
+ret
 
-mov %ebx, 2
-mov %esi, 1
-#ADD STATEMENT
-add %esi, %ebx
-#WRITE STATEMENT
-push %esi
-push offset flat:.int_format
-call printf
-add %esp,8
+.globl f;
+.type f, @function
+f:
+push %ebp
+mov %ebp, %esp
+sub %esp, 0
+
+mov %ebx, 1
 
 leave
+mov %eax, %ebx
 ret
 

@@ -199,6 +199,7 @@ public class PrintASTVisitor implements ASTVisitor{
 	@Override
 	public Object visit(LessThanExpressionNode n) {
 		
+		addToSrc(n);
 		return null;
 	}
 

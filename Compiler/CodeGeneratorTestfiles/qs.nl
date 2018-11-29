@@ -52,14 +52,13 @@ BEGIN
         BEGIN
           i := i+1
         END;
-      IF i < j
-        THEN
+      IF i < j THEN
           BEGIN
             t := A[i];
             A[i] := A[j];
             A[j] := t
           END
-        ELSE
+      ELSE
           RETURN j
     END
 END;
@@ -69,13 +68,12 @@ PROCEDURE quicksort(
 );
   VAR q:  INTEGER;
 BEGIN
-  IF p < r
-    THEN
-      BEGIN
-        q := partition(Z,p,r);
-        quicksort(Z,p,q);
-        quicksort(Z,q+1,r)
-      END
+  IF p < r THEN
+	  BEGIN
+	    q := partition(Z,p,r);
+	    quicksort(Z,p,q);
+	    quicksort(Z,q+1,r)
+	  END
 END;
 BEGIN
   A[0] := 0-1; A[20] :=  1000;  { book does this; don't know why }

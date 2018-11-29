@@ -87,13 +87,21 @@ call printf
 add %esp,8
 
 #ASSIGNMENT
-mov %ebx, -32
+mov %esi, 100
+mov %ebx, 102
+sub %ebx, %esi
+imul %ebx, 4
+add %ebx, -24
 add %ebx, %ebp
 mov %esi, 3
 mov dword ptr [%ebx], %esi
 
 #ARRAY REFERENCE
-mov %ebx, -32
+mov %esi, 100
+mov %ebx, 102
+sub %ebx, %esi
+imul %ebx, 4
+add %ebx, -24
 add %ebx, %ebp
 mov %ebx, dword ptr [%ebx]
 #WRITE STATEMENT

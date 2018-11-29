@@ -24,6 +24,7 @@ public class CodeGenVisitor implements ASTVisitor {
 	private int andCounter;
 	private int falseCounter;
 	private int trueCounter;
+	private int whileCounter;
 	
 
 	public CodeGenVisitor(HashMap<String, HashMap<String, VariableMeta>> in) {
@@ -33,6 +34,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		
 		// Initializer for the register map. No registers are being used at the
 		// beginning.
+		//register_map.put("%eax", false);
 		register_map.put("%ebx", false);
 		register_map.put("%ecx", false);
 		// register_map.put("%edx",false);
@@ -46,6 +48,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		falseCounter = 0;
 		trueCounter = 0;
 		andCounter = 0;
+		whileCounter = 0;
 	}
 	
 	/**
@@ -110,24 +113,23 @@ public class CodeGenVisitor implements ASTVisitor {
 	@Override
 	public Object visit(ArrayReferenceNode n) {
 		System.out.println("#ARRAY REFERENCE");
+		String reg = get_free_register();
+		String reg2;
 		VariableMeta temp = curSymTable.get(n.getLabel());
 		int offset = temp.offset;
-		//Get value to add to array base address.
-		int arrayOffset = 0;
-		int val;
-		if(n.getChild(0) instanceof IntegerConstNode){
-			val = ((IntegerConstNode)n.getChild(0)).getValue();
-		} else {
-			val = ((CharacterNode)n.getChild(0)).getValue();
-		}
-		arrayOffset = (temp.intMax-val)*4;
-		offset = offset - arrayOffset;
 		
-		String reg = get_free_register();
+		reg2 = (String)n.getChild(0).accept(this);
+		System.out.printf("mov %s, %d\n", reg, temp.intMax);
+		System.out.printf("sub %s, %s\n", reg, reg2);
+		System.out.printf("imul %s, 4\n", reg);
+		System.out.printf("add %s, %d\n", reg, offset);
 		
-		System.out.printf("mov %s, %d\n", reg, offset);
+		free_register(reg2);
+
 		System.out.printf("add %s, %%ebp\n", reg);
 		System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
+		
+		type = n.getConvertedType();
 		return reg;
 	}
 
@@ -160,29 +162,30 @@ public class CodeGenVisitor implements ASTVisitor {
 	@Override
 	public Object visit(AssignmentStatementNode n) {
 		System.out.println("#ASSIGNMENT");
-		//Get the address of the variable and put
-		//it in a register
+		
 		String reg = get_free_register();
+		String reg2;
 		VariableMeta temp = curSymTable.get(n.getLhs().getLabel());
 		int offset = temp.offset;
 		
-		//Alter offset for array indexing
 		if(n.getLhs() instanceof ArrayReferenceNode) {
-			int val;
-			if(n.getLhs().getChild(0) instanceof IntegerConstNode){
-				val = ((IntegerConstNode)n.getLhs().getChild(0)).getValue();
-			} else {
-				val = ((CharacterNode)n.getLhs().getChild(0)).getValue();
-			}
-			int arrayOffset = (temp.intMax-val)*4;
-			offset = offset-arrayOffset;
+			reg2 = (String)n.getLhs().getChild(0).accept(this);
+			System.out.printf("mov %s, %d\n", reg, temp.intMax);
+			System.out.printf("sub %s, %s\n", reg, reg2);
+			System.out.printf("imul %s, 4\n", reg);
+			System.out.printf("add %s, %d\n", reg, offset);
+			
+			free_register(reg2);
+		} else {
+			//Get the address of the variable and put
+			//it in a register
+			System.out.printf("mov %s, %d\n", reg, offset);
 		}
-		System.out.printf("mov %s, %d\n", reg, offset);
 		System.out.printf("add %s, %%ebp\n", reg);
 		
 		
 		//Get the value to be assigned to the variable
-		String reg2 = (String)n.getRhs().accept(this);
+		reg2 = (String)n.getRhs().accept(this);
 		if(type == 3) {
 			System.out.printf("push %s\n", reg2);
 			System.out.println("fld dword ptr [%esp]");
@@ -290,20 +293,70 @@ public class CodeGenVisitor implements ASTVisitor {
 
 	@Override
 	public Object visit(FunctionDeclNode n) {
+		String funcName = n.getLabel();
+		curSymTable = funcSymTables.get(funcName);
+		
+		int stackSpace = 0;
+		for(VariableMeta meta : curSymTable.values()) {
+			if(meta.offset < stackSpace) {
+				stackSpace = meta.offset;
+			}
+		}
+		stackSpace *= -1;
+
+		System.out.printf( 
+				".globl %s;\n" + 
+				".type %s, @function\n" + 
+				"%s:\n" + 
+				"push %%ebp\n" + 
+				"mov %%ebp, %%esp\n" + 
+				"sub %%esp, " + (stackSpace) + "\n\n", funcName,funcName,funcName);
+
 		visitChildren(n);
+		System.out.println("leave\nret\n");
 		return null;
 	}
 
 	@Override
 	public Object visit(FunctionInvocationNode n) {
-		visitChildren(n);
-		return null;
+		System.out.println("#FUNCTION INVOCATION");
+		System.out.println("#SAVE THOSE REGISTERS");
+		System.out.println("push %eax");
+		System.out.println("push %ebx");
+		System.out.println("push %ecx");
+		System.out.println("push %edx");
+		System.out.println("push %esi");
+		System.out.println("push %edi");
+		System.out.println("#DO THE OTHER STUFF");
+		
+		
+		
+		
+		n.getChild(0).accept(this);
+		String reg = get_free_register();
+		
+		System.out.printf("mov %s, %%eax\n", reg);
+		return reg;
 	}
 
 	@Override
 	public Object visit(GreaterEqualExpressionNode n) {
-		visitChildren(n);
-		return null;
+		String reg = (String)n.getLeftOperand().accept(this);
+		String reg2 = (String)n.getRightOperand().accept(this);
+		System.out.println("#GREATER THAN");
+		System.out.printf("cmp %s, %s\n", reg, reg2);
+		System.out.printf("jge greater%d\n", greaterCounter);
+		System.out.printf("mov %s, 0\n", reg);
+		System.out.printf("jmp continue%d\n", continueCounter);
+		System.out.printf("greater%d:\n", greaterCounter);
+		System.out.printf("mov %s, 1\n", reg);
+		System.out.printf("continue%d:\n", continueCounter);
+		greaterCounter++;
+		continueCounter++;
+		free_register(reg2);
+		
+		type = 2;
+		return reg;
 	}
 
 	@Override
@@ -328,7 +381,30 @@ public class CodeGenVisitor implements ASTVisitor {
 
 	@Override
 	public Object visit(IfStatementNode n) {
-		visitChildren(n);
+		int falseCounterSave = falseCounter;
+		int continueCounterSave = continueCounter;
+		falseCounter++;
+		continueCounter++;
+		String reg = (String)n.getChild(0).accept(this);
+		System.out.println("#IF STATEMENT");
+		System.out.printf("cmp %s, 0\n", reg);
+		System.out.printf("je false%d\n", falseCounterSave);
+		
+		n.getChild(1).accept(this);
+		
+		System.out.printf("jmp continue%d\n", continueCounterSave);
+		
+		
+		System.out.printf("false%d:\n", falseCounterSave);
+				
+		if(n.getChildren().size() == 3 && n.getChild(2) != null) {
+			n.getChild(2).accept(this);
+		}
+		
+		System.out.printf("jmp continue%d\n", continueCounterSave);
+		System.out.printf("continue%d:\n", continueCounterSave);
+		
+		
 		return null;
 	}
 
@@ -349,13 +425,28 @@ public class CodeGenVisitor implements ASTVisitor {
 	@Override
 	public Object visit(InvocationNode n) {
 		visitChildren(n);
+		System.out.printf("call %s\n", n.getLabel());
 		return null;
 	}
 
 	@Override
 	public Object visit(LessEqualExpressionNode n) {
-		visitChildren(n);
-		return null;
+		String reg = (String)n.getLeftOperand().accept(this);
+		String reg2 = (String)n.getRightOperand().accept(this);
+		System.out.println("#LESS EQUAL THAN");
+		System.out.printf("cmp %s, %s\n", reg, reg2);
+		System.out.printf("jg less%d\n", lessCounter);
+		System.out.printf("mov %s, 1\n", reg);
+		System.out.printf("jmp continue%d\n", continueCounter);
+		System.out.printf("less%d:\n", lessCounter);
+		System.out.printf("mov %s, 0\n", reg);
+		System.out.printf("continue%d:\n", continueCounter);
+		lessCounter++;
+		continueCounter++;
+		free_register(reg2);
+		
+		type = 2;
+		return reg;
 	}
 
 	@Override
@@ -364,7 +455,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		String reg2 = (String)n.getRightOperand().accept(this);
 		System.out.println("#LESS THAN");
 		System.out.printf("cmp %s, %s\n", reg, reg2);
-		System.out.printf("jg less%d\n", lessCounter);
+		System.out.printf("jge less%d\n", lessCounter);
 		System.out.printf("mov %s, 1\n", reg);
 		System.out.printf("jmp continue%d\n", continueCounter);
 		System.out.printf("less%d:\n", lessCounter);
@@ -565,8 +656,10 @@ public class CodeGenVisitor implements ASTVisitor {
 				"mov %ebp, %esp\n" + 
 				"sub %esp, " + (stackSpace) + "\n");
 
-		visitChildren(n);
+		n.getChild(2).accept(this);
+		n.getChild(3).accept(this);
 		System.out.println("leave\nret\n");
+		n.getChild(5).accept(this);
 		return null;
 	}
 
@@ -642,7 +735,9 @@ public class CodeGenVisitor implements ASTVisitor {
 
 	@Override
 	public Object visit(ReturnStatementNode n) {
-		visitChildren(n);
+		String reg = (String)n.getChild(0).accept(this);
+		System.out.printf("mov %%eax, %s", reg);
+		free_register(reg);
 		return null;
 	}
 
@@ -685,8 +780,30 @@ public class CodeGenVisitor implements ASTVisitor {
 
 	@Override
 	public Object visit(SubtractExpressionNode n) {
-		visitChildren(n);
-		return null;
+		String reg2 = null;
+		String reg = null;
+		reg2 = (String)n.getRightOperand().accept(this);
+		reg = (String)n.getLeftOperand().accept(this);
+		System.out.println("#SUBTRACT STATEMENT");
+		if(n.getConvertedType() == 3) {
+			System.out.printf("push %s\n", reg2);
+			System.out.println("fld dword ptr [%esp]");
+			System.out.println("add %esp, 4");
+			System.out.printf("push %s\n", reg);
+			System.out.println("fld dword ptr [%esp]");
+			System.out.println("add %esp, 4");
+			System.out.println("fsub %st, %st(1)");
+			System.out.println("sub %esp, 4");
+			System.out.println("fstp dword ptr [%esp]\n");
+			System.out.printf("pop %s\n", reg);
+		} else {
+			System.out.printf("sub %s, %s\n", reg, reg2);
+			
+		}
+		
+		free_register(reg2);
+		type = n.getConvertedType();
+		return reg;
 	}
 
 	@Override
@@ -697,7 +814,27 @@ public class CodeGenVisitor implements ASTVisitor {
 
 	@Override
 	public Object visit(WhileStatementNode n) {
-		visitChildren(n);
+		int whileCounterSave = whileCounter;
+		int continueCounterSave = continueCounter;
+		int falseCounterSave = falseCounter;
+		whileCounter++;
+		continueCounter++;
+		falseCounter++;
+
+		System.out.println("#WHILE STATEMENT");
+		System.out.printf("while%d:\n", whileCounterSave);
+		
+		String reg = (String)n.getChild(0).accept(this);
+		System.out.printf("cmp %s, 0\n", reg);
+		free_register(reg);
+		
+		System.out.printf("je false%d\n", falseCounterSave);
+		
+		n.getChild(1).accept(this);
+		
+		System.out.printf("jmp while%d\n", whileCounterSave);
+		System.out.printf("false%d:", falseCounterSave);
+		
 		return null;
 	}
 

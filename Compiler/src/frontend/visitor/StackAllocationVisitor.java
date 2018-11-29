@@ -121,7 +121,10 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(FunctionDeclNode n) {
-		// TODO Auto-generated method stub
+		symTable = new HashMap<String, VariableMeta>();
+		funcSymTables.put(n.getLabel(), symTable);
+		offsetStack.push(-4);
+		visitChildren(n);
 		return null;
 	}
 
@@ -334,7 +337,7 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(SubtractExpressionNode n) {
-		// TODO Auto-generated method stub
+		visitChildren(n);
 		return null;
 	}
 
