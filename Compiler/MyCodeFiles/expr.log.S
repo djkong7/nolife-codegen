@@ -67,6 +67,13 @@ mov %ecx, 0
 continue0:
 mov dword ptr [%ebx], %ecx
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -20
 add %ebx, %ebp
@@ -76,7 +83,21 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -16
 add %ebx, %ebp
@@ -98,7 +119,21 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -16
 add %ebx, %ebp
@@ -128,7 +163,21 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ebx, 0
 #SCALAR REF
 mov %ecx, -4
@@ -185,6 +234,13 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 leave
 ret

@@ -23,11 +23,25 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 36
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 push offset flat:.__str0
 #WRITE STATEMENT
 push offset flat:.str_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 #READ STATEMENT
 mov %ebx, -4
@@ -51,12 +65,26 @@ cmp %ebx, %ecx
 je case0code
 jmp case1
 case0code:
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ecx, 0
 #WRITE STATEMENT
 push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp case3
 case1:
 mov %ecx, 3
@@ -67,12 +95,26 @@ cmp %ebx, %ecx
 je case1code
 jmp case2
 case1code:
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ecx, 1
 #WRITE STATEMENT
 push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp case3
 case2:
 mov %ecx, 5
@@ -80,12 +122,26 @@ cmp %ebx, %ecx
 je case2code
 jmp case3
 case2code:
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ecx, 2
 #WRITE STATEMENT
 push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp case3
 case3:
 

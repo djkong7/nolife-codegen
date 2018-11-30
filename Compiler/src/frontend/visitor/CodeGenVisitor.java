@@ -18,6 +18,7 @@ public class CodeGenVisitor implements ASTVisitor {
 	private boolean compilerTempUsed;
 	private int numCompilerTemps;
 	private static final int compilerTempExtraSpace = 32;
+	private boolean globalVar;
 
 	// Map holding the different registers that can be used and
 	// whether or not they are being used.
@@ -60,6 +61,9 @@ public class CodeGenVisitor implements ASTVisitor {
 		compilerTempNext = 0;
 		compilerTempUsed = false;
 		numCompilerTemps = 0;
+		
+		
+		globalVar = false;
 	}
 	
 	/**
@@ -111,14 +115,15 @@ public class CodeGenVisitor implements ASTVisitor {
 		reg2 = (String)n.getRightOperand().accept(this);
 		
 		System.out.println("#ADD STATEMENT");
-		if(n.getConvertedType() == 3) {
+		if(n.getRealType() == 3) {
+			System.out.println("finit");
 			System.out.printf("push %s\n", reg2);
 			System.out.println("fld dword ptr [%esp]");
 			System.out.println("add %esp, 4");
 			System.out.printf("push %s\n", reg);
 			System.out.println("fld dword ptr [%esp]");
 			System.out.println("add %esp, 4");
-			System.out.println("fadd %st, %st(1)");
+			System.out.println("fadd %st(0), %st(1)");
 			System.out.println("sub %esp, 4");
 			System.out.println("fstp dword ptr [%esp]\n");
 			System.out.printf("pop %s\n", reg);
@@ -128,6 +133,20 @@ public class CodeGenVisitor implements ASTVisitor {
 		}
 		
 		free_register(reg2);
+		
+		if(n.getRealType() != n.getConvertedType()) {
+			if(n.getRealType() == 3) {
+				System.out.println("finit");
+				System.out.printf("push %s\n", reg);
+				System.out.println("fld dword ptr [%esp]");
+				System.out.println("add %esp, 4");
+				System.out.println("sub %esp, 4");
+				System.out.println("fistp dword ptr [%esp]");
+				System.out.printf("pop %s\n", reg);
+			}
+		}
+		
+		
 		type = n.getConvertedType();
 		return reg;
 	}
@@ -237,6 +256,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		//Get the value to be assigned to the variable
 		reg2 = (String)n.getRhs().accept(this);
 		if(type == 3) {
+			System.out.println("finit");
 			System.out.printf("push %s\n", reg2);
 			System.out.println("fld dword ptr [%esp]");
 			System.out.println("add %esp, 4");
@@ -354,7 +374,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		if(info == null) {
 			info = funcSymTables.get("global").get(Float.toString(n.getValue()));
 		}
-		
+		System.out.println("finit");
 		System.out.printf("fld dword ptr %s\n", info.staticLocation);
 		System.out.println("sub %esp, 4");
 		System.out.println("fstp dword ptr [%esp]");
@@ -568,7 +588,19 @@ public class CodeGenVisitor implements ASTVisitor {
 	public Object visit(MultiplyExpressionNode n) {
 		String reg = (String)n.getLeftOperand().accept(this);
 		String reg2 = (String)n.getRightOperand().accept(this);
-		System.out.printf("imul %s, %s\n", reg, reg2);
+		if(n.getRealType() == 3) {
+			System.out.println("finit");
+			System.out.printf("push %s\n", reg);
+			System.out.println("fld dword ptr [%esp]");
+			System.out.println("add %esp, 4");
+			System.out.printf("push %s\n", reg2);
+			System.out.println("fld dword ptr [%esp]");
+			System.out.println("fmul %st(0), %st(1)");
+			System.out.println("fstp dword ptr [%esp]\n");
+			System.out.printf("pop %s\n", reg);
+		} else {
+			System.out.printf("imul %s, %s\n", reg, reg2);
+		}
 		free_register(reg2);
 		return reg;
 	}
@@ -644,6 +676,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		if(n.getRealType() != n.getConvertedType()) {
 			System.out.println("#PAREN CONVERT");
 			if(n.getConvertedType() == 3) {
+				System.out.println("finit");
 				System.out.printf("push %s\n", reg);
 				System.out.println("fild dword ptr [%esp]");
 				System.out.println("add %esp, 4");
@@ -789,6 +822,8 @@ public class CodeGenVisitor implements ASTVisitor {
 		n.getChild(3).accept(this);
 		System.out.println("leave\nret\n");
 		n.getChild(5).accept(this);
+		
+		System.out.println(".comm __main_ebp,4,4");
 		return null;
 	}
 
@@ -800,6 +835,13 @@ public class CodeGenVisitor implements ASTVisitor {
 		//it in a register
 		String reg = get_free_register();
 		VariableMeta temp = curSymTable.get(n.getChild(0).getLabel());
+		if(temp == null) {
+			HashMap<String, VariableMeta> sure = funcSymTables.get("global");
+			temp = sure.get(n.getChild(0).getLabel());
+			globalVar = true;
+		}
+		
+		
 		int offset = temp.offset;
 		
 		//Alter offset for array indexing
@@ -893,6 +935,8 @@ public class CodeGenVisitor implements ASTVisitor {
 		
 		if(n.getRealType() != n.getConvertedType()) {
 			if(n.getConvertedType() == 3) {
+				System.out.println("finit");
+				System.out.println("#SCALAR REF CONVERSION");
 				System.out.printf("push %s\n", reg);
 				System.out.println("fild dword ptr [%esp]");
 				System.out.println("add %esp, 4");
@@ -927,6 +971,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		reg = (String)n.getLeftOperand().accept(this);
 		System.out.println("#SUBTRACT STATEMENT");
 		if(n.getConvertedType() == 3) {
+			System.out.println("finit");
 			System.out.printf("push %s\n", reg2);
 			System.out.println("fld dword ptr [%esp]");
 			System.out.println("add %esp, 4");
@@ -983,6 +1028,15 @@ public class CodeGenVisitor implements ASTVisitor {
 	public Object visit(WriteStatementNode n) {
 		String reg;
 		
+		System.out.println("#SAVE THOSE REGISTERS");
+		//System.out.println("push %eax");
+		System.out.println("push %ebx");
+		System.out.println("push %ecx");
+		System.out.println("push %edx");
+		System.out.println("push %esi");
+		System.out.println("push %edi");
+		System.out.println("#DO THE OTHER STUFF");
+		
 		reg = (String)n.getChild(0).accept(this);
 		
 		System.out.println("#WRITE STATEMENT");
@@ -1011,6 +1065,19 @@ public class CodeGenVisitor implements ASTVisitor {
 			System.out.println("call printf\n" +
 					"add %esp,8");
 		}
+		
+		
+		
+		
+		System.out.println("#RESTORE THOSE REGISTERS");
+		System.out.println("pop %edi");
+		System.out.println("pop %esi");
+		System.out.println("pop %edx");
+		System.out.println("pop %ecx");
+		System.out.println("pop %ebx");
+		//System.out.println("pop %eax");
+		System.out.println("#DO THE OTHER STUFF");
+		
 		
 		return null;
 	}
@@ -1125,16 +1192,4 @@ public class CodeGenVisitor implements ASTVisitor {
 		return null;
 	}
 }
-
-/*12//
-15//
-18//
-21//
-24//
-27//
-30//
-33//
-36//
-39*/
-
 

@@ -23,11 +23,25 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 33
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 push offset flat:.__str0
 #WRITE STATEMENT
 push offset flat:.str_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 leave
 ret

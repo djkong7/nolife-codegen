@@ -45,6 +45,13 @@ mov %ebx, 0
 continue1:
 cmp %ebx, 0
 je false0
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -4
 add %ebx, %ebp
@@ -54,6 +61,13 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 #ASSIGNMENT
 mov %ebx, -4
@@ -70,6 +84,13 @@ mov dword ptr [%ebx], %ecx
 jmp while0
 false0:
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -4
 add %ebx, %ebp
@@ -79,6 +100,13 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 #ASSIGNMENT
 mov %ebx, -8
@@ -126,6 +154,13 @@ mov %ebx, 0
 continue5:
 cmp %ebx, 0
 je false2
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -4
 add %ebx, %ebp
@@ -140,6 +175,13 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 #ASSIGNMENT
 mov %ebx, -4

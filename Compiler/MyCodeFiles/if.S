@@ -47,20 +47,48 @@ mov %ebx, dword ptr [%ebx]
 #IF STATEMENT
 cmp %ebx, 0
 je false0
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ecx, 1
 #WRITE STATEMENT
 push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp continue0
 false0:
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ecx, 0
 #WRITE STATEMENT
 push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp continue0
 continue0:
 
@@ -78,30 +106,72 @@ mov %esi, dword ptr [%esi]
 #IF STATEMENT
 cmp %esi, 0
 je false2
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %edi, 0
 #WRITE STATEMENT
 push %edi
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp continue2
 false2:
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %edi, 1
 #WRITE STATEMENT
 push %edi
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp continue2
 continue2:
 jmp continue1
 false1:
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %edi, 0
 #WRITE STATEMENT
 push %edi
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp continue1
 continue1:
 

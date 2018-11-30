@@ -22,6 +22,13 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 112
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
 push %ebx
@@ -105,6 +112,13 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 leave
 ret
@@ -116,12 +130,26 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 32
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ebx, 1
 #WRITE STATEMENT
 push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 mov %ebx, 1
 mov %eax, %ebx
@@ -136,12 +164,26 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 32
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ebx, 2
 #WRITE STATEMENT
 push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
@@ -173,12 +215,26 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 32
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ebx, 3
 #WRITE STATEMENT
 push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
@@ -230,12 +286,26 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 32
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ebx, 4
 #WRITE STATEMENT
 push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS

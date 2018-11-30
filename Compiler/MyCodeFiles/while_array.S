@@ -46,6 +46,7 @@ continue1:
 cmp %ebx, 0
 je false0
 #ASSIGNMENT
+#ARRAY REFERENCE
 #SCALAR REF
 mov %ecx, -4
 add %ecx, %ebp
@@ -115,6 +116,13 @@ continue5:
 #IF STATEMENT
 cmp %ebx, 0
 je false2
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 #SCALAR REF
 mov %esi, -4
@@ -131,14 +139,35 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp continue4
 false2:
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 mov %ecx, 0
 #WRITE STATEMENT
 push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 jmp continue4
 continue4:
 

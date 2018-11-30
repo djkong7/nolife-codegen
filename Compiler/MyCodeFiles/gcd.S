@@ -78,6 +78,13 @@ mov %ebx, 1
 continue3:
 cmp %ebx, 0
 je false0
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
 push %ebx
@@ -109,6 +116,13 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 #READ STATEMENT
 mov %ebx, -4

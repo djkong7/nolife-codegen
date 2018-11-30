@@ -34,6 +34,13 @@ add %ebx, %ebp
 mov %ecx, 122
 mov dword ptr [%ebx], %ecx
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -28
 add %ebx, %ebp
@@ -55,7 +62,21 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -28
 add %ebx, %ebp
@@ -85,8 +106,16 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 #ASSIGNMENT
+#ARRAY REFERENCE
 mov %ecx, 100
 mov %ebx, 102
 sub %ebx, %ecx
@@ -96,6 +125,13 @@ add %ebx, %ebp
 mov %ecx, 3
 mov dword ptr [%ebx], %ecx
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %ecx, 100
 mov %ebx, 102
@@ -109,6 +145,13 @@ push %ebx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 leave
 ret

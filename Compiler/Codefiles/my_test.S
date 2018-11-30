@@ -244,6 +244,8 @@ add %ecx, %esi
 mov %esi, -4
 add %esi, %ebp
 mov %esi, dword ptr [%esi]
+finit
+#SCALAR REF CONVERSION
 push %esi
 fild dword ptr [%esp]
 add %esp, 4
@@ -251,15 +253,27 @@ sub %esp, 4
 fstp dword ptr [%esp]
 pop %esi
 #FLOAT CONSTANT
+finit
 fld dword ptr .__flt0
 sub %esp, 4
 fstp dword ptr [%esp]
 pop %edi
-imul %esi, %edi
+finit
+push %esi
+fld dword ptr [%esp]
+add %esp, 4
+push %edi
+fld dword ptr [%esp]
+fmul %st(0), %st(1)
+fstp dword ptr [%esp]
+
+pop %esi
 #SCALAR REF
 mov %edi, -8
 add %edi, %ebp
 mov %edi, dword ptr [%edi]
+finit
+#SCALAR REF CONVERSION
 push %edi
 fild dword ptr [%esp]
 add %esp, 4
@@ -267,7 +281,25 @@ sub %esp, 4
 fstp dword ptr [%esp]
 pop %edi
 #ADD STATEMENT
-add %esi, %edi
+finit
+push %edi
+fld dword ptr [%esp]
+add %esp, 4
+push %esi
+fld dword ptr [%esp]
+add %esp, 4
+fadd %st(0), %st(1)
+sub %esp, 4
+fstp dword ptr [%esp]
+
+pop %esi
+finit
+push %esi
+fld dword ptr [%esp]
+add %esp, 4
+sub %esp, 4
+fistp dword ptr [%esp]
+pop %esi
 mov dword ptr [%ecx], %esi
 
 #ASSIGNMENT
@@ -307,6 +339,13 @@ push %ebp
 mov %ebp, %esp
 sub %esp, 32
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 1
 mov %ecx, 10
@@ -322,7 +361,21 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 2
 mov %ecx, 10
@@ -338,7 +391,21 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 3
 mov %ecx, 10
@@ -354,7 +421,21 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 4
 mov %ecx, 10
@@ -370,7 +451,21 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 5
 mov %ecx, 10
@@ -386,7 +481,21 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 6
 mov %ecx, 10
@@ -402,7 +511,21 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 7
 mov %ecx, 10
@@ -418,7 +541,21 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 8
 mov %ecx, 10
@@ -434,7 +571,21 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 9
 mov %ecx, 10
@@ -450,7 +601,21 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #ARRAY REFERENCE
 mov %esi, 10
 mov %ecx, 10
@@ -466,6 +631,13 @@ push %ecx
 push offset flat:.int_format
 call printf
 add %esp,8
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 leave
 ret

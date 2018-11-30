@@ -1,0 +1,690 @@
+dk@DK-32Linux:~/Documents/GitHub/nolife-codegen/Compiler/Codefiles$ gdb t
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.5) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from t...done.
+(gdb) b 201
+Breakpoint 1 at 0x8048584: file my_test.S, line 201.
+(gdb) r
+Starting program: /home/dk/Documents/GitHub/nolife-codegen/Compiler/Codefiles/t 
+
+Breakpoint 1, continue1 () at my_test.S:201
+201	mov %ecx, -4
+(gdb) info reg
+eax            0xb7fbcdbc	-1208234564
+ecx            0xa	10
+edx            0xbfffefe4	-1073745948
+ebx            0x1	1
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0xb7fbb000	-1208242176
+edi            0xb7fbb000	-1208242176
+eip            0x8048584	0x8048584 <continue1+9>
+eflags         0x202	[ IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) s
+202	add %ecx, %ebp
+(gdb) 
+203	mov %ecx, dword ptr [%ecx]
+(gdb) 
+204	mov %ebx, 10
+(gdb) info reg
+eax            0xb7fbcdbc	-1208234564
+ecx            0x1	1
+edx            0xbfffefe4	-1073745948
+ebx            0x1	1
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0xb7fbb000	-1208242176
+edi            0xb7fbb000	-1208242176
+eip            0x804858d	0x804858d <continue1+18>
+eflags         0x283	[ CF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) s
+205	sub %ebx, %ecx
+(gdb) 
+206	imul %ebx, 4
+(gdb) 
+207	mov %ecx, 8
+(gdb) 
+208	add %ecx, %ebp
+(gdb) 
+209	mov %ecx, dword ptr [%ecx]
+(gdb) 
+210	add %ebx, %ecx
+(gdb) 
+212	mov %ecx, -4
+(gdb) info reg
+eax            0xb7fbcdbc	-1208234564
+ecx            0xbfffef90	-1073746032
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefb4	-1073745996
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0xb7fbb000	-1208242176
+edi            0xb7fbb000	-1208242176
+eip            0x80485a2	0x80485a2 <continue1+39>
+eflags         0x286	[ PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) p 0xbfffefb4
+$1 = 3221221300
+(gdb) x 0xbfffefb4
+0xbfffefb4:	0x00000001
+(gdb) Quit
+(gdb) c
+Continuing.
+12
+
+Breakpoint 1, continue1 () at my_test.S:201
+201	mov %ecx, -4
+(gdb) r
+The program being debugged has been started already.
+Start it from the beginning? (y or n) n
+Program not restarted.
+(gdb) s
+202	add %ecx, %ebp
+(gdb) 
+203	mov %ecx, dword ptr [%ecx]
+(gdb) 
+204	mov %ebx, 10
+(gdb) 
+205	sub %ebx, %ecx
+(gdb) 
+206	imul %ebx, 4
+(gdb) 
+207	mov %ecx, 8
+(gdb) 
+208	add %ecx, %ebp
+(gdb) 
+209	mov %ecx, dword ptr [%ecx]
+(gdb) 
+210	add %ebx, %ecx
+(gdb) 
+212	mov %ecx, -4
+(gdb) info reg
+eax            0x3	3
+ecx            0xbfffef90	-1073746032
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefb0	-1073746000
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0x1	1
+edi            0xb7fbb000	-1208242176
+eip            0x80485a2	0x80485a2 <continue1+39>
+eflags         0x282	[ SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) x 0xbfffefb0
+0xbfffefb0:	0x00000002
+(gdb) b 212
+Breakpoint 2 at 0x80485a2: file my_test.S, line 212.
+(gdb) b 268
+Breakpoint 3 at 0x8048615: file my_test.S, line 268.
+(gdb) c
+Continuing.
+
+Breakpoint 3, continue1 () at my_test.S:268
+268	push %ebx
+(gdb) x 0xbfffefb0
+0xbfffefb0:	0x0000000f
+(gdb) s
+continue1 () at my_test.S:269
+269	push %ecx
+(gdb) 
+continue1 () at my_test.S:270
+270	push %edx
+(gdb) 
+continue1 () at my_test.S:271
+271	push %esi
+(gdb) 
+continue1 () at my_test.S:272
+272	push %edi
+(gdb) 
+continue1 () at my_test.S:276
+276	mov %ecx, -4
+(gdb) 
+277	add %ecx, %ebp
+(gdb) 
+278	mov %ecx, dword ptr [%ecx]
+(gdb) 
+279	mov %ebx, 10
+(gdb) info reg
+eax            0x3	3
+ecx            0x2	2
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefb0	-1073746000
+esp            0xbfffef14	0xbfffef14
+ebp            0xbfffef50	0xbfffef50
+esi            0x41300000	1093664768
+edi            0xb7fbb000	-1208242176
+eip            0x8048623	0x8048623 <continue1+168>
+eflags         0x283	[ CF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) c
+Continuing.
+15
+
+Breakpoint 1, continue1 () at my_test.S:201
+201	mov %ecx, -4
+(gdb) c
+Continuing.
+
+Breakpoint 2, continue1 () at my_test.S:212
+212	mov %ecx, -4
+(gdb) info reg
+eax            0x3	3
+ecx            0xbfffef90	-1073746032
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefac	-1073746004
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0x1	1
+edi            0xb7fbb000	-1208242176
+eip            0x80485a2	0x80485a2 <continue1+39>
+eflags         0x286	[ PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) x 0xbfffefac
+0xbfffefac:	0x00000003
+(gdb) c
+Continuing.
+
+Breakpoint 3, continue1 () at my_test.S:268
+268	push %ebx
+(gdb) x 0xbfffefac
+0xbfffefac:	0x00000012
+(gdb) c
+Continuing.
+18
+
+Breakpoint 1, continue1 () at my_test.S:201
+201	mov %ecx, -4
+(gdb) info reg
+eax            0x3	3
+ecx            0xa	10
+edx            0xbfffefe4	-1073745948
+ebx            0x1	1
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0x1	1
+edi            0xb7fbb000	-1208242176
+eip            0x8048584	0x8048584 <continue1+9>
+eflags         0x202	[ IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) s
+202	add %ecx, %ebp
+(gdb) c
+Continuing.
+
+Breakpoint 2, continue1 () at my_test.S:212
+212	mov %ecx, -4
+(gdb) info reg
+eax            0x3	3
+ecx            0xbfffef90	-1073746032
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefa8	-1073746008
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0x1	1
+edi            0xb7fbb000	-1208242176
+eip            0x80485a2	0x80485a2 <continue1+39>
+eflags         0x282	[ SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) x 0xbfffefa8
+0xbfffefa8:	0x00000004
+(gdb) s
+213	add %ecx, %ebp
+(gdb) 
+214	mov %ecx, dword ptr [%ecx]
+(gdb) 
+216	push %ecx
+(gdb) 
+continue1 () at my_test.S:217
+217	fild dword ptr [%esp]
+(gdb) 
+218	add %esp, 4
+(gdb) 
+continue1 () at my_test.S:219
+219	sub %esp, 4
+(gdb) 
+continue1 () at my_test.S:220
+220	fstp dword ptr [%esp]
+(gdb) 
+221	pop %ecx
+(gdb) 
+continue1 () at my_test.S:223
+223	fld dword ptr .__flt0
+(gdb) info reg
+eax            0x3	3
+ecx            0x40800000	1082130432
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefa8	-1073746008
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0x1	1
+edi            0xb7fbb000	-1208242176
+eip            0x80485b9	0x80485b9 <continue1+62>
+eflags         0x286	[ PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) info float
+  R7: Valid   0x3fff8000000000000000 +1                         
+  R6: Valid   0x4002a000000000000000 +10                        
+  R5: Valid   0x40008000000000000000 +2                         
+  R4: Valid   0x4002b000000000000000 +11                        
+  R3: Valid   0x4000c000000000000000 +3                         
+=>R2: Valid   0x4002c000000000000000 +12                        
+  R1: Empty   0x40018000000000000000
+  R0: Empty   0x00000000000000000000
+
+Status Word:         0x1000                                            
+                       TOP: 2
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x000f
+Instruction Pointer: 0x73:0x080485b5
+Operand Pointer:     0x7b:0xbfffef24
+Opcode:              0x0000
+(gdb) s
+224	sub %esp, 4
+(gdb) info float
+  R7: Valid   0x3fff8000000000000000 +1                         
+  R6: Valid   0x4002a000000000000000 +10                        
+  R5: Valid   0x40008000000000000000 +2                         
+  R4: Valid   0x4002b000000000000000 +11                        
+  R3: Valid   0x4000c000000000000000 +3                         
+  R2: Valid   0x4002c000000000000000 +12                        
+=>R1: Valid   0x40008000000000000000 +2                         
+  R0: Empty   0x00000000000000000000
+
+Status Word:         0x0800                                            
+                       TOP: 1
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x0003
+Instruction Pointer: 0x73:0x080485b9
+Operand Pointer:     0x7b:0x08048710
+Opcode:              0x0000
+(gdb) s
+continue1 () at my_test.S:225
+225	fstp dword ptr [%esp]
+(gdb) s
+226	pop %esi
+(gdb) s
+continue1 () at my_test.S:227
+227	push %ecx
+(gdb) info float
+  R7: Valid   0x3fff8000000000000000 +1                         
+  R6: Valid   0x4002a000000000000000 +10                        
+  R5: Valid   0x40008000000000000000 +2                         
+  R4: Valid   0x4002b000000000000000 +11                        
+  R3: Valid   0x4000c000000000000000 +3                         
+=>R2: Valid   0x4002c000000000000000 +12                        
+  R1: Empty   0x40008000000000000000
+  R0: Empty   0x00000000000000000000
+
+Status Word:         0x1000                                            
+                       TOP: 2
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x000f
+Instruction Pointer: 0x73:0x080485c2
+Operand Pointer:     0x7b:0xbfffef24
+Opcode:              0x0000
+(gdb) info reg
+eax            0x3	3
+ecx            0x40800000	1082130432
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefa8	-1073746008
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0x40000000	1073741824
+edi            0xb7fbb000	-1208242176
+eip            0x80485c6	0x80485c6 <continue1+75>
+eflags         0x286	[ PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) s
+continue1 () at my_test.S:228
+228	fld dword ptr [%esp]
+(gdb) s
+229	add %esp, 4
+(gdb) info float
+  R7: Valid   0x3fff8000000000000000 +1                         
+  R6: Valid   0x4002a000000000000000 +10                        
+  R5: Valid   0x40008000000000000000 +2                         
+  R4: Valid   0x4002b000000000000000 +11                        
+  R3: Valid   0x4000c000000000000000 +3                         
+  R2: Valid   0x4002c000000000000000 +12                        
+=>R1: Valid   0x40018000000000000000 +4                         
+  R0: Empty   0x00000000000000000000
+
+Status Word:         0x0800                                            
+                       TOP: 1
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x0003
+Instruction Pointer: 0x73:0x080485c7
+Operand Pointer:     0x7b:0xbfffef24
+Opcode:              0x0000
+(gdb) s
+continue1 () at my_test.S:230
+230	push %esi
+(gdb) s
+continue1 () at my_test.S:231
+231	fld dword ptr [%esp]
+(gdb) s
+232	fmul %st(0), %st(1)
+(gdb) info float
+  R7: Valid   0x3fff8000000000000000 +1                         
+  R6: Valid   0x4002a000000000000000 +10                        
+  R5: Valid   0x40008000000000000000 +2                         
+  R4: Valid   0x4002b000000000000000 +11                        
+  R3: Valid   0x4000c000000000000000 +3                         
+  R2: Valid   0x4002c000000000000000 +12                        
+  R1: Valid   0x40018000000000000000 +4                         
+=>R0: Valid   0x40008000000000000000 +2                         
+
+Status Word:         0x0000                                            
+                       TOP: 0
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x0000
+Instruction Pointer: 0x73:0x080485ce
+Operand Pointer:     0x7b:0xbfffef24
+Opcode:              0x0000
+(gdb) p %st0
+A syntax error in expression, near `%st0'.
+(gdb) p $st0
+$2 = 2
+(gdb) p $st1
+$3 = 4
+(gdb) s
+233	fstp dword ptr [%esp]
+(gdb) info float
+  R7: Valid   0x3fff8000000000000000 +1                         
+  R6: Valid   0x4002a000000000000000 +10                        
+  R5: Valid   0x40008000000000000000 +2                         
+  R4: Valid   0x4002b000000000000000 +11                        
+  R3: Valid   0x4000c000000000000000 +3                         
+  R2: Valid   0x4002c000000000000000 +12                        
+  R1: Valid   0x40018000000000000000 +4                         
+=>R0: Valid   0x40028000000000000000 +8                         
+
+Status Word:         0x0000                                            
+                       TOP: 0
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x0000
+Instruction Pointer: 0x73:0x080485d1
+Operand Pointer:     0x7b:0xbfffef24
+Opcode:              0x0000
+(gdb) s
+235	pop %ecx
+(gdb) info reg
+eax            0x3	3
+ecx            0x40800000	1082130432
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefa8	-1073746008
+esp            0xbfffef24	0xbfffef24
+ebp            0xbfffef50	0xbfffef50
+esi            0x40000000	1073741824
+edi            0xb7fbb000	-1208242176
+eip            0x80485d6	0x80485d6 <continue1+91>
+eflags         0x286	[ PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) x 0xbfffef24
+0xbfffef24:	0x41000000
+(gdb) s
+continue1 () at my_test.S:237
+237	mov %esi, -8
+(gdb) info reg
+eax            0x3	3
+ecx            0x41000000	1090519040
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefa8	-1073746008
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0x40000000	1073741824
+edi            0xb7fbb000	-1208242176
+eip            0x80485d7	0x80485d7 <continue1+92>
+eflags         0x286	[ PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) s
+238	add %esi, %ebp
+(gdb) s
+239	mov %esi, dword ptr [%esi]
+(gdb) 
+241	push %esi
+(gdb) info reg
+eax            0x3	3
+ecx            0x41000000	1090519040
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefa8	-1073746008
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0xd	13
+edi            0xb7fbb000	-1208242176
+eip            0x80485e0	0x80485e0 <continue1+101>
+eflags         0x287	[ CF PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) s
+continue1 () at my_test.S:242
+242	fild dword ptr [%esp]
+(gdb) s
+243	add %esp, 4
+(gdb) info float
+  R7: Valid   0x3fff8000000000000000 +1                         
+  R6: Valid   0x4002a000000000000000 +10                        
+  R5: Valid   0x40008000000000000000 +2                         
+  R4: Valid   0x4002b000000000000000 +11                        
+  R3: Valid   0x4000c000000000000000 +3                         
+  R2: Valid   0x4002c000000000000000 +12                        
+  R1: Valid   0x40018000000000000000 +4                         
+=>R0: Valid   0x4002d000000000000000 +13                        
+
+Status Word:         0x0000                                            
+                       TOP: 0
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x0000
+Instruction Pointer: 0x73:0x080485e1
+Operand Pointer:     0x7b:0xbfffef24
+Opcode:              0x0000
+(gdb) s
+continue1 () at my_test.S:244
+244	sub %esp, 4
+(gdb) s
+continue1 () at my_test.S:245
+245	fstp dword ptr [%esp]
+(gdb) s
+246	pop %esi
+(gdb) info reg
+eax            0x3	3
+ecx            0x41000000	1090519040
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefa8	-1073746008
+esp            0xbfffef24	0xbfffef24
+ebp            0xbfffef50	0xbfffef50
+esi            0xd	13
+edi            0xb7fbb000	-1208242176
+eip            0x80485ed	0x80485ed <continue1+114>
+eflags         0x286	[ PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) x 0xbfffef24
+0xbfffef24:	0x41500000
+(gdb) s
+continue1 () at my_test.S:248
+248	push %esi
+(gdb) info reg
+eax            0x3	3
+ecx            0x41000000	1090519040
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefa8	-1073746008
+esp            0xbfffef28	0xbfffef28
+ebp            0xbfffef50	0xbfffef50
+esi            0x41500000	1095761920
+edi            0xb7fbb000	-1208242176
+eip            0x80485ee	0x80485ee <continue1+115>
+eflags         0x286	[ PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) s
+continue1 () at my_test.S:249
+249	fld dword ptr [%esp]
+(gdb) s
+250	add %esp, 4
+(gdb) info float
+  R7: Valid   0x3fff8000000000000000 +1                         
+  R6: Valid   0x4002a000000000000000 +10                        
+  R5: Valid   0x40008000000000000000 +2                         
+  R4: Valid   0x4002b000000000000000 +11                        
+  R3: Valid   0x4000c000000000000000 +3                         
+  R2: Valid   0x4002c000000000000000 +12                        
+  R1: Valid   0x40018000000000000000 +4                         
+=>R0: Valid   0x4002d000000000000000 +13                        
+
+Status Word:         0x0000                                            
+                       TOP: 0
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x0000
+Instruction Pointer: 0x73:0x080485ef
+Operand Pointer:     0x7b:0xbfffef24
+Opcode:              0x0000
+(gdb) s
+continue1 () at my_test.S:251
+251	push %ecx
+(gdb) s
+continue1 () at my_test.S:252
+252	fld dword ptr [%esp]
+(gdb) 
+253	add %esp, 4
+(gdb) info float
+=>R7: Special 0xffffc000000000000000 Real Indefinite (QNaN)
+  R6: Valid   0x4002a000000000000000 +10                        
+  R5: Valid   0x40008000000000000000 +2                         
+  R4: Valid   0x4002b000000000000000 +11                        
+  R3: Valid   0x4000c000000000000000 +3                         
+  R2: Valid   0x4002c000000000000000 +12                        
+  R1: Valid   0x40018000000000000000 +4                         
+  R0: Valid   0x4002d000000000000000 +13                        
+
+Status Word:         0x3a41   IE                       SF      C1      
+                       TOP: 7
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x8000
+Instruction Pointer: 0x73:0x080485f6
+Operand Pointer:     0x7b:0xbfffef24
+Opcode:              0x0000
+(gdb) info reg
+eax            0x3	3
+ecx            0x41000000	1090519040
+edx            0xbfffefe4	-1073745948
+ebx            0xbfffefa8	-1073746008
+esp            0xbfffef24	0xbfffef24
+ebp            0xbfffef50	0xbfffef50
+esi            0x41500000	1095761920
+edi            0xb7fbb000	-1208242176
+eip            0x80485f9	0x80485f9 <continue1+126>
+eflags         0x286	[ PF SF IF ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) x 0xbfffef24
+0xbfffef24:	0x41000000
+(gdb) 

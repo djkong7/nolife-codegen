@@ -32,6 +32,13 @@ push offset flat:.flt_in_format
 call scanf
 add %esp,8
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -4
 add %ebx, %ebp
@@ -45,8 +52,23 @@ fstp qword ptr [%esp]
 push offset flat:.flt_format
 call printf
 add %esp,12
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #FLOAT CONSTANT
+finit
 fld dword ptr .__flt0
 sub %esp, 4
 fstp dword ptr [%esp]
@@ -60,8 +82,23 @@ fstp qword ptr [%esp]
 push offset flat:.flt_format
 call printf
 add %esp,12
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #FLOAT CONSTANT
+finit
 fld dword ptr .__flt1
 sub %esp, 4
 fstp dword ptr [%esp]
@@ -75,6 +112,13 @@ fstp qword ptr [%esp]
 push offset flat:.flt_format
 call printf
 add %esp,12
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 leave
 ret

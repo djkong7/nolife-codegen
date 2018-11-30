@@ -28,6 +28,7 @@ sub %esp, 36
 mov %ebx, -4
 add %ebx, %ebp
 #FLOAT CONSTANT
+finit
 fld dword ptr .__flt1
 sub %esp, 4
 fstp dword ptr [%esp]
@@ -51,22 +52,31 @@ pop %ebx
 #DO THE OTHER STUFF
 mov %esi, %eax
 #ADD STATEMENT
+finit
 push %esi
 fld dword ptr [%esp]
 add %esp, 4
 push %ecx
 fld dword ptr [%esp]
 add %esp, 4
-fadd %st, %st(1)
+fadd %st(0), %st(1)
 sub %esp, 4
 fstp dword ptr [%esp]
 
 pop %ecx
+finit
 push %ecx
 fld dword ptr [%esp]
 add %esp, 4
 fstp dword ptr [%ebx]
 
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
 #SCALAR REF
 mov %ebx, -4
 add %ebx, %ebp
@@ -80,6 +90,13 @@ fstp qword ptr [%esp]
 push offset flat:.flt_format
 call printf
 add %esp,12
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 leave
 ret
@@ -92,6 +109,7 @@ mov %ebp, %esp
 sub %esp, 33
 
 #FLOAT CONSTANT
+finit
 fld dword ptr .__flt0
 sub %esp, 4
 fstp dword ptr [%esp]

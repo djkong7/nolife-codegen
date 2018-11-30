@@ -1,61 +1,30 @@
-{*********************************************************
+{** $awkdoc$ ********************************************************
 
-This testcase checks subroutine calls, both recursive and
-nonrecursive, as well as parameter passing.
+A version of quicksort for testing recursion: reads and sorts
+19 INTEGER.
 
-*********************************************************}
+** $endawk$ ********************************************************}
 
-PROGRAM subprog;
- VAR i,j,k,l:INTEGER;
- 	 x:ARRAY[1..10] OF INTEGER;
-     a,b,c,d:INTEGER;
-     
-
-	{* pass array as parm *}
+PROGRAM qs;
+VAR  A:  ARRAY [0..20] OF INTEGER;
 	
-	PROCEDURE init (a:ARRAY[1..10] OF INTEGER);
-	VAR i,j:INTEGER;
+	PROCEDURE  readarray;
+	VAR  i:  INTEGER;
 	BEGIN
-		i:=1; j:=10;
-		WHILE i<=10 DO BEGIN
-		  a[i]:= (i*0.01)+j;
-		  i:=i+1;
-		  j:=j+1
+		WRITE ('A?');
+		i := 1;
+		WHILE i < 20 DO
+		BEGIN
+			WRITE (i);
+			READ (A[i]);
+			i := i + 1
 		END
 	END;
 	
-	PROCEDURE writearray(z:ARRAY[1..10] OF INTEGER);
-	BEGIN
-		WRITE(z[1]);
-		WRITE(z[2]);
-		WRITE(z[3]);
-		WRITE(z[4]);
-		WRITE(z[5]);
-		WRITE(z[6]);
-		WRITE(z[7]);
-		WRITE(z[8]);
-		WRITE(z[9]);
-		WRITE(z[10])
-	END;
 	
-	PROCEDURE inc(a:INTEGER);
-	BEGIN
-		a:=a+1
-	END;
-
-
-{*main*}
+	
 BEGIN
-	init(x);
-	writearray(x);
-	i:=1;
-	WHILE i<=10 DO BEGIN
-	  x[i]:= x[i]*i;
-	  inc(x[i]); 
-	  i:=i+1
-	END;
-	writearray(x)
-
-
+	A[0] := 0-1; A[20] :=  1000;  { book does this; don't know why }
+	readarray()
 
 END
