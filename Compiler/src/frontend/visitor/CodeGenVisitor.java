@@ -144,11 +144,19 @@ public class CodeGenVisitor implements ASTVisitor {
 		System.out.printf("mov %s, %d\n", reg, temp.intMax);
 		System.out.printf("sub %s, %s\n", reg, reg2);
 		System.out.printf("imul %s, 4\n", reg);
-		System.out.printf("add %s, %d\n", reg, offset);
 		
 		free_register(reg2);
-
-		System.out.printf("add %s, %%ebp\n", reg);
+		if(offset > 0) {
+			reg2 = get_free_register();
+			System.out.printf("mov %s, %d\n", reg2, offset);
+			System.out.printf("add %s, %%ebp\n", reg2);
+			System.out.printf("mov %s, dword ptr [%s]\n", reg2, reg2);
+			System.out.printf("add %s, %s\n", reg, reg2);
+			free_register(reg2);
+		} else {
+			System.out.printf("add %s, %d\n", reg, offset);
+			System.out.printf("add %s, %%ebp\n", reg);
+		}
 		System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
 		
 		type = n.getConvertedType();
@@ -191,24 +199,40 @@ public class CodeGenVisitor implements ASTVisitor {
 		int offset = temp.offset;
 		
 		if(n.getLhs() instanceof ArrayReferenceNode) {
+			System.out.println("#ARRAY REFERENCE");
 			reg2 = (String)n.getLhs().getChild(0).accept(this);
 			System.out.printf("mov %s, %d\n", reg, temp.intMax);
 			System.out.printf("sub %s, %s\n", reg, reg2);
 			System.out.printf("imul %s, 4\n", reg);
-			System.out.printf("add %s, %d\n", reg, offset);
+			
 			
 			free_register(reg2);
+			if(offset > 0) {
+				reg2 = get_free_register();
+				System.out.printf("mov %s, %d\n", reg2, offset);
+				System.out.printf("add %s, %%ebp\n", reg2);
+				System.out.printf("mov %s, dword ptr [%s]\n", reg2, reg2);
+				System.out.printf("add %s, %s\n", reg, reg2);
+				free_register(reg2);
+			} else {
+				System.out.printf("add %s, %d\n", reg, offset);
+				System.out.printf("add %s, %%ebp\n", reg);
+			}
+			
 		} else {
 			//Get the address of the variable and put
 			//it in a register
 			System.out.printf("mov %s, %d\n", reg, offset);
+			System.out.printf("add %s, %%ebp\n", reg);
+			
+			if(offset > 0) {
+				System.out.println("#TO PARAMETER");
+				System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
+			}
 		}
-		System.out.printf("add %s, %%ebp\n", reg);
 		
-		if(offset > 0) {
-			System.out.println("#TO PARAMETER");
-			System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
-		}
+		
+		
 		
 		//Get the value to be assigned to the variable
 		reg2 = (String)n.getRhs().accept(this);
@@ -877,6 +901,7 @@ public class CodeGenVisitor implements ASTVisitor {
 				System.out.printf("pop %s\n", reg);
 			}
 		}
+		
 		return reg;
 	}
 
@@ -1016,6 +1041,35 @@ public class CodeGenVisitor implements ASTVisitor {
 					
 					System.out.printf("push %s\n", reg);
 					free_register(reg);
+				} else if(temp instanceof ArrayReferenceNode){
+					ArrayReferenceNode node = (ArrayReferenceNode)temp;
+					reg = get_free_register();
+					String reg2;
+					VariableMeta temp2 = curSymTable.get(node.getLabel());
+					int offset = temp2.offset;
+					
+					reg2 = (String)node.getChild(0).accept(this);
+					System.out.printf("mov %s, %d\n", reg, temp2.intMax);
+					System.out.printf("sub %s, %s\n", reg, reg2);
+					System.out.printf("imul %s, 4\n", reg);
+					
+					free_register(reg2);
+					if(offset > 0) {
+						reg2 = get_free_register();
+						System.out.printf("mov %s, %d\n", reg2, offset);
+						System.out.printf("add %s, %%ebp\n", reg2);
+						System.out.printf("mov %s, dword ptr [%s]\n", reg2, reg2);
+						System.out.printf("add %s, %s\n", reg, reg2);
+						free_register(reg2);
+					} else {
+						System.out.printf("add %s, %d\n", reg, offset);
+						System.out.printf("add %s, %%ebp\n", reg);
+					}
+					System.out.printf("push %s\n", reg);
+					
+					type = node.getConvertedType();
+					//return reg;
+					
 				} else {//IntegerConstNode, SubtractExpressionNode
 					System.out.println("#OTHER PARAM");
 					reg = (String)temp.accept(this);
@@ -1071,4 +1125,16 @@ public class CodeGenVisitor implements ASTVisitor {
 		return null;
 	}
 }
+
+/*12//
+15//
+18//
+21//
+24//
+27//
+30//
+33//
+36//
+39*/
+
 

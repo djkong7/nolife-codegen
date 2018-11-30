@@ -1,5 +1,6 @@
 .intel_syntax
 .section .rodata
+.__flt0: .float 0.010000
 .int_format:
 	.string "%d\12\0"
 .str_format:
@@ -20,55 +21,7 @@
 main:
 push %ebp
 mov %ebp, %esp
-sub %esp, 72
-
-#ASSIGNMENT
-mov %ebx, -20
-add %ebx, %ebp
-mov %ecx, 1
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, -24
-add %ebx, %ebp
-mov %ecx, 2
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, -28
-add %ebx, %ebp
-mov %ecx, 3
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, -32
-add %ebx, %ebp
-mov %ecx, 4
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, -4
-add %ebx, %ebp
-mov %ecx, 1
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, -8
-add %ebx, %ebp
-mov %ecx, 2
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, -12
-add %ebx, %ebp
-mov %ecx, 3
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, -16
-add %ebx, %ebp
-mov %ecx, 4
-mov dword ptr [%ebx], %ecx
+sub %esp, 104
 
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
@@ -80,38 +33,10 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 #SCALAR REF PARAM
-mov %ebx, -12
+mov %ebx, -56
 add %ebx, %ebp
 push %ebx
-call b4
-#RESTORE THOSE REGISTERS
-pop %edi
-pop %esi
-pop %edx
-pop %ecx
-pop %ebx
-#DO THE OTHER STUFF
-mov %ebx, %eax
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#FUNCTION INVOCATION
-#SAVE THOSE REGISTERS
-push %ebx
-push %ecx
-push %edx
-push %esi
-push %edi
-#DO THE OTHER STUFF
-#PUSH THE PARAMS
-#SCALAR REF PARAM
-mov %ebx, -20
-add %ebx, %ebp
-push %ebx
-call d1
+call init
 add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
@@ -121,16 +46,6 @@ pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
 
-#SCALAR REF
-mov %ebx, -20
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
 push %ebx
@@ -140,24 +55,12 @@ push %esi
 push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
-#OTHER PARAM
-#FUNCTION INVOCATION
-#SAVE THOSE REGISTERS
+#SCALAR REF PARAM
+mov %ebx, -56
+add %ebx, %ebp
 push %ebx
-push %ecx
-push %edx
-push %esi
-push %edi
-#DO THE OTHER STUFF
-#PUSH THE PARAMS
-#OTHER PARAM
-mov %ebx, 1
-#compilerTempNext: -44
-mov %ecx, -44
-add %ecx, %ebp
-mov dword ptr [%ecx], %ebx
-push %ecx
-call b4
+call writearray
+add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -165,410 +68,430 @@ pop %edx
 pop %ecx
 pop %ebx
 #DO THE OTHER STUFF
-mov %ebx, %eax
-#compilerTempNext: -48
-mov %ecx, -48
-add %ecx, %ebp
-mov dword ptr [%ecx], %ebx
-push %ecx
-call b4
-#RESTORE THOSE REGISTERS
-pop %edi
-pop %esi
-pop %edx
-pop %ecx
-pop %ebx
-#DO THE OTHER STUFF
-mov %ebx, %eax
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-leave
-ret
-
-.globl b4;
-.type b4, @function
-b4:
-push %ebp
-mov %ebp, %esp
-sub %esp, 32
-
-mov %ebx, 4
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#SCALAR REF
-mov %ebx, 8
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#PARAMETER REFERENCE
-mov %ebx, dword ptr [%ebx]
-mov %ecx, 1
-#ADD STATEMENT
-add %ebx, %ecx
-mov %eax, %ebx
-
-leave
-ret
-
-.globl d2;
-.type d2, @function
-d2:
-push %ebp
-mov %ebp, %esp
-sub %esp, 36
-
-#SCALAR REF
-mov %ebx, 12
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#PARAMETER REFERENCE
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#SCALAR REF
-mov %ebx, 8
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#PARAMETER REFERENCE
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
 
 #ASSIGNMENT
 mov %ebx, -4
 add %ebx, %ebp
-#SCALAR REF
-mov %ecx, 8
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-#PARAMETER REFERENCE
-mov %ecx, dword ptr [%ecx]
+mov %ecx, 1
 mov dword ptr [%ebx], %ecx
 
-#ASSIGNMENT
-mov %ebx, 8
-add %ebx, %ebp
-#TO PARAMETER
-mov %ebx, dword ptr [%ebx]
+#WHILE STATEMENT
+while0:
 #SCALAR REF
-mov %ecx, 12
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-#PARAMETER REFERENCE
-mov %ecx, dword ptr [%ecx]
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, 12
+mov %ebx, -4
 add %ebx, %ebp
-#TO PARAMETER
 mov %ebx, dword ptr [%ebx]
+mov %ecx, 10
+#LESS EQUAL THAN
+cmp %ebx, %ecx
+jg less0
+mov %ebx, 1
+jmp continue1
+less0:
+mov %ebx, 0
+continue1:
+cmp %ebx, 0
+je false0
+#ASSIGNMENT
+#ARRAY REFERENCE
 #SCALAR REF
 mov %ecx, -4
 add %ecx, %ebp
 mov %ecx, dword ptr [%ecx]
+mov %ebx, 10
+sub %ebx, %ecx
+imul %ebx, 4
+add %ebx, -56
+add %ebx, %ebp
+#ARRAY REFERENCE
+#SCALAR REF
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+add %ecx, -56
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+#SCALAR REF
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+imul %ecx, %esi
 mov dword ptr [%ebx], %ecx
+
+#FUNCTION INVOCATION
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
+#PUSH THE PARAMS
+#SCALAR REF
+mov %ecx, -4
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+mov %ebx, 10
+sub %ebx, %ecx
+imul %ebx, 4
+add %ebx, -56
+add %ebx, %ebp
+push %ebx
+call inc
+add %esp, 4
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
+
+#ASSIGNMENT
+mov %ecx, -4
+add %ecx, %ebp
+#SCALAR REF
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+mov %edi, 1
+#ADD STATEMENT
+add %esi, %edi
+mov dword ptr [%ecx], %esi
+
+jmp while0
+false0:
+
+#FUNCTION INVOCATION
+#SAVE THOSE REGISTERS
+push %ebx
+push %ecx
+push %edx
+push %esi
+push %edi
+#DO THE OTHER STUFF
+#PUSH THE PARAMS
+#SCALAR REF PARAM
+mov %ecx, -56
+add %ecx, %ebp
+push %ecx
+call writearray
+add %esp, 4
+#RESTORE THOSE REGISTERS
+pop %edi
+pop %esi
+pop %edx
+pop %ecx
+pop %ebx
+#DO THE OTHER STUFF
 
 leave
 ret
 
-.globl d3;
-.type d3, @function
-d3:
+.globl init;
+.type init, @function
+init:
+push %ebp
+mov %ebp, %esp
+sub %esp, 40
+
+#ASSIGNMENT
+mov %ecx, -4
+add %ecx, %ebp
+mov %esi, 1
+mov dword ptr [%ecx], %esi
+
+#ASSIGNMENT
+mov %ecx, -8
+add %ecx, %ebp
+mov %esi, 10
+mov dword ptr [%ecx], %esi
+
+#WHILE STATEMENT
+while1:
+#SCALAR REF
+mov %ecx, -4
+add %ecx, %ebp
+mov %ecx, dword ptr [%ecx]
+mov %esi, 10
+#LESS EQUAL THAN
+cmp %ecx, %esi
+jg less1
+mov %ecx, 1
+jmp continue3
+less1:
+mov %ecx, 0
+continue3:
+cmp %ecx, 0
+je false1
+#ASSIGNMENT
+#ARRAY REFERENCE
+#SCALAR REF
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+#SCALAR REF
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+push %esi
+fild dword ptr [%esp]
+add %esp, 4
+sub %esp, 4
+fstp dword ptr [%esp]
+pop %esi
+#FLOAT CONSTANT
+fld dword ptr .__flt0
+sub %esp, 4
+fstp dword ptr [%esp]
+pop %edi
+imul %esi, %edi
+#SCALAR REF
+mov %edi, -8
+add %edi, %ebp
+mov %edi, dword ptr [%edi]
+push %edi
+fild dword ptr [%esp]
+add %esp, 4
+sub %esp, 4
+fstp dword ptr [%esp]
+pop %edi
+#ADD STATEMENT
+add %esi, %edi
+mov dword ptr [%ecx], %esi
+
+#ASSIGNMENT
+mov %ecx, -4
+add %ecx, %ebp
+#SCALAR REF
+mov %esi, -4
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+mov %edi, 1
+#ADD STATEMENT
+add %esi, %edi
+mov dword ptr [%ecx], %esi
+
+#ASSIGNMENT
+mov %ecx, -8
+add %ecx, %ebp
+#SCALAR REF
+mov %esi, -8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+mov %edi, 1
+#ADD STATEMENT
+add %esi, %edi
+mov dword ptr [%ecx], %esi
+
+jmp while1
+false1:
+
+leave
+ret
+
+.globl writearray;
+.type writearray, @function
+writearray:
+push %ebp
+mov %ebp, %esp
+sub %esp, 32
+
+#ARRAY REFERENCE
+mov %esi, 1
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+#ARRAY REFERENCE
+mov %esi, 2
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+#ARRAY REFERENCE
+mov %esi, 3
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+#ARRAY REFERENCE
+mov %esi, 4
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+#ARRAY REFERENCE
+mov %esi, 5
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+#ARRAY REFERENCE
+mov %esi, 6
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+#ARRAY REFERENCE
+mov %esi, 7
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+#ARRAY REFERENCE
+mov %esi, 8
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+#ARRAY REFERENCE
+mov %esi, 9
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+#ARRAY REFERENCE
+mov %esi, 10
+mov %ecx, 10
+sub %ecx, %esi
+imul %ecx, 4
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
+add %ecx, %esi
+mov %ecx, dword ptr [%ecx]
+#WRITE STATEMENT
+push %ecx
+push offset flat:.int_format
+call printf
+add %esp,8
+
+leave
+ret
+
+.globl inc;
+.type inc, @function
+inc:
 push %ebp
 mov %ebp, %esp
 sub %esp, 32
 
 #ASSIGNMENT
-mov %ebx, 8
-add %ebx, %ebp
-#TO PARAMETER
-mov %ebx, dword ptr [%ebx]
-#SCALAR REF
 mov %ecx, 8
 add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-#PARAMETER REFERENCE
-mov %ecx, dword ptr [%ecx]
-mov %esi, 1
-#ADD STATEMENT
-add %ecx, %esi
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, 12
-add %ebx, %ebp
 #TO PARAMETER
-mov %ebx, dword ptr [%ebx]
+mov %ecx, dword ptr [%ecx]
 #SCALAR REF
-mov %ecx, 12
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
+mov %esi, 8
+add %esi, %ebp
+mov %esi, dword ptr [%esi]
 #PARAMETER REFERENCE
-mov %ecx, dword ptr [%ecx]
-mov %esi, 2
+mov %esi, dword ptr [%esi]
+mov %edi, 1
 #ADD STATEMENT
-add %ecx, %esi
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, 16
-add %ebx, %ebp
-#TO PARAMETER
-mov %ebx, dword ptr [%ebx]
-#SCALAR REF
-mov %ecx, 16
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-#PARAMETER REFERENCE
-mov %ecx, dword ptr [%ecx]
-mov %esi, 3
-#ADD STATEMENT
-add %ecx, %esi
-mov dword ptr [%ebx], %ecx
-
-#ASSIGNMENT
-mov %ebx, 20
-add %ebx, %ebp
-#TO PARAMETER
-mov %ebx, dword ptr [%ebx]
-#SCALAR REF
-mov %ecx, 20
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-#PARAMETER REFERENCE
-mov %ecx, dword ptr [%ecx]
-mov dword ptr [%ebx], %ecx
-
-leave
-ret
-
-.globl d1;
-.type d1, @function
-d1:
-push %ebp
-mov %ebp, %esp
-sub %esp, 36
-
-#ASSIGNMENT
-mov %ebx, -4
-add %ebx, %ebp
-#SCALAR REF
-mov %ecx, 8
-add %ecx, %ebp
-mov %ecx, dword ptr [%ecx]
-#PARAMETER REFERENCE
-mov %ecx, dword ptr [%ecx]
-mov %esi, 200
-imul %ecx, %esi
-mov dword ptr [%ebx], %ecx
-
-#SCALAR REF
-mov %ebx, 8
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#PARAMETER REFERENCE
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#SCALAR REF
-mov %ebx, -4
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#FUNCTION INVOCATION
-#SAVE THOSE REGISTERS
-push %ebx
-push %ecx
-push %edx
-push %esi
-push %edi
-#DO THE OTHER STUFF
-#PUSH THE PARAMS
-#SCALAR REF PARAM
-mov %ebx, -4
-add %ebx, %ebp
-push %ebx
-#SCALAR REF PARAM
-mov %ebx, 8
-add %ebx, %ebp
-#PARAM PASSED AS PARAM
-mov %ebx, dword ptr [%ebx]
-push %ebx
-call d2
-add %esp, 8
-#RESTORE THOSE REGISTERS
-pop %edi
-pop %esi
-pop %edx
-pop %ecx
-pop %ebx
-#DO THE OTHER STUFF
-
-#SCALAR REF
-mov %ebx, 8
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#PARAMETER REFERENCE
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#SCALAR REF
-mov %ebx, -4
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#FUNCTION INVOCATION
-#SAVE THOSE REGISTERS
-push %ebx
-push %ecx
-push %edx
-push %esi
-push %edi
-#DO THE OTHER STUFF
-#PUSH THE PARAMS
-#SCALAR REF PARAM
-mov %ebx, -4
-add %ebx, %ebp
-push %ebx
-#SCALAR REF PARAM
-mov %ebx, 8
-add %ebx, %ebp
-#PARAM PASSED AS PARAM
-mov %ebx, dword ptr [%ebx]
-push %ebx
-#SCALAR REF PARAM
-mov %ebx, 8
-add %ebx, %ebp
-#PARAM PASSED AS PARAM
-mov %ebx, dword ptr [%ebx]
-push %ebx
-#SCALAR REF PARAM
-mov %ebx, 8
-add %ebx, %ebp
-#PARAM PASSED AS PARAM
-mov %ebx, dword ptr [%ebx]
-push %ebx
-call d3
-add %esp, 16
-#RESTORE THOSE REGISTERS
-pop %edi
-pop %esi
-pop %edx
-pop %ecx
-pop %ebx
-#DO THE OTHER STUFF
-
-#SCALAR REF
-mov %ebx, 8
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#PARAMETER REFERENCE
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#SCALAR REF
-mov %ebx, -4
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#FUNCTION INVOCATION
-#SAVE THOSE REGISTERS
-push %ebx
-push %ecx
-push %edx
-push %esi
-push %edi
-#DO THE OTHER STUFF
-#PUSH THE PARAMS
-#SCALAR REF PARAM
-mov %ebx, -4
-add %ebx, %ebp
-push %ebx
-#SCALAR REF PARAM
-mov %ebx, -4
-add %ebx, %ebp
-push %ebx
-#SCALAR REF PARAM
-mov %ebx, -4
-add %ebx, %ebp
-push %ebx
-#SCALAR REF PARAM
-mov %ebx, -4
-add %ebx, %ebp
-push %ebx
-call d3
-add %esp, 16
-#RESTORE THOSE REGISTERS
-pop %edi
-pop %esi
-pop %edx
-pop %ecx
-pop %ebx
-#DO THE OTHER STUFF
-
-#SCALAR REF
-mov %ebx, 8
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#PARAMETER REFERENCE
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
-
-#SCALAR REF
-mov %ebx, -4
-add %ebx, %ebp
-mov %ebx, dword ptr [%ebx]
-#WRITE STATEMENT
-push %ebx
-push offset flat:.int_format
-call printf
-add %esp,8
+add %esi, %edi
+mov dword ptr [%ecx], %esi
 
 leave
 ret

@@ -20,7 +20,11 @@ public class StackAllocationVisitor implements ASTVisitor{
 	}
 	
 	private void addToOffsetStack(int size) {
-		offsetStack.push(offsetStack.pop() - size*4);
+		if(offsetStack.peek() > 0) {
+			offsetStack.push(offsetStack.pop() + size*4);
+		} else {
+			offsetStack.push(offsetStack.pop() - size*4);
+		}
 	}
 	
 	private void visitChildren(ASTNode n) {
@@ -167,9 +171,13 @@ public class StackAllocationVisitor implements ASTVisitor{
 
 	@Override
 	public Object visit(IntegerDimensionNode n) {
-		//This is one less than the actual size because
-		//the extra is allocated in VarDeclNode
-		addToOffsetStack((n.getUpperBound()-n.getLowerBound()));
+		//Only do this if it isn't a parameter
+		if(!(offsetStack.peek() > 0)) {
+			//This is one less than the actual size because
+			//the extra is allocated in VarDeclNode
+			addToOffsetStack((n.getUpperBound()-n.getLowerBound()));
+		}
+		
 		for(VariableMeta var : symTable.values()) {
 			if(var.type == -1) {
 				var.intMin = n.getLowerBound();
@@ -363,11 +371,11 @@ public class StackAllocationVisitor implements ASTVisitor{
 			
 			//Set offset value
 			temp.offset = offsetStack.peek();
-			if(temp.offset > 0) {
+			/*if(temp.offset > 0) {
 				addToOffsetStack(-1);
-			} else {
+			} else {*/
 				addToOffsetStack(1);
-			}
+			//}
 			
 		}
 		
