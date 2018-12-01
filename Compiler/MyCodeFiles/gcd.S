@@ -21,6 +21,8 @@ main:
 push %ebp
 mov %ebp, %esp
 sub %esp, 40
+mov %ebx, offset flat:.__main_ebp
+mov dword ptr [%ebx], %ebp
 
 #READ STATEMENT
 mov %ebx, -4
@@ -103,6 +105,7 @@ mov %ebx, -4
 add %ebx, %ebp
 push %ebx
 call gcd
+add %esp, 8
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -178,6 +181,8 @@ mov %ecx, dword ptr [%ecx]
 #PARAMETER REFERENCE
 mov %ecx, dword ptr [%ecx]
 mov %eax, %ecx
+leave
+ret
 jmp continue4
 false1:
 #FUNCTION INVOCATION
@@ -219,6 +224,7 @@ add %ecx, %ebp
 mov %ecx, dword ptr [%ecx]
 push %ecx
 call gcd
+add %esp, 8
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -228,9 +234,12 @@ pop %ebx
 #DO THE OTHER STUFF
 mov %ecx, %eax
 mov %eax, %ecx
+leave
+ret
 jmp continue4
 continue4:
 
 leave
 ret
 
+.comm .__main_ebp,4,4

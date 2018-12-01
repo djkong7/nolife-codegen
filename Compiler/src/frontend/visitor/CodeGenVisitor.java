@@ -157,6 +157,13 @@ public class CodeGenVisitor implements ASTVisitor {
 		String reg = get_free_register();
 		String reg2;
 		VariableMeta temp = curSymTable.get(n.getLabel());
+		
+		if(temp == null) {
+			HashMap<String, VariableMeta> sure = funcSymTables.get("global");
+			temp = sure.get(n.getLabel());
+			globalVar = true;
+		}
+		
 		int offset = temp.offset;
 		
 		reg2 = (String)n.getChild(0).accept(this);
@@ -165,20 +172,33 @@ public class CodeGenVisitor implements ASTVisitor {
 		System.out.printf("imul %s, 4\n", reg);
 		
 		free_register(reg2);
-		if(offset > 0) {
+		
+		if(globalVar) {
 			reg2 = get_free_register();
-			System.out.printf("mov %s, %d\n", reg2, offset);
-			System.out.printf("add %s, %%ebp\n", reg2);
+			System.out.printf("add %s, %d\n", reg, offset);
+			System.out.printf("mov %s, offset flat:.__main_ebp\n", reg2);
 			System.out.printf("mov %s, dword ptr [%s]\n", reg2, reg2);
 			System.out.printf("add %s, %s\n", reg, reg2);
 			free_register(reg2);
 		} else {
-			System.out.printf("add %s, %d\n", reg, offset);
-			System.out.printf("add %s, %%ebp\n", reg);
+
+			if(offset > 0) {
+				reg2 = get_free_register();
+				System.out.printf("mov %s, %d\n", reg2, offset);
+				System.out.printf("add %s, %%ebp\n", reg2);
+				System.out.printf("mov %s, dword ptr [%s]\n", reg2, reg2);
+				System.out.printf("add %s, %s\n", reg, reg2);
+				free_register(reg2);
+			} else {
+				System.out.printf("add %s, %d\n", reg, offset);
+				System.out.printf("add %s, %%ebp\n", reg);
+			}
+			
+			
 		}
 		System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
-		
 		type = n.getConvertedType();
+		globalVar = false;
 		return reg;
 	}
 
@@ -215,27 +235,46 @@ public class CodeGenVisitor implements ASTVisitor {
 		String reg = get_free_register();
 		String reg2;
 		VariableMeta temp = curSymTable.get(n.getLhs().getLabel());
+		
+		if(temp == null) {
+			HashMap<String, VariableMeta> sure = funcSymTables.get("global");
+			temp = sure.get(n.getLhs().getLabel());
+			globalVar = true;
+		}
+		
 		int offset = temp.offset;
 		
 		if(n.getLhs() instanceof ArrayReferenceNode) {
+			
 			System.out.println("#ARRAY REFERENCE");
 			reg2 = (String)n.getLhs().getChild(0).accept(this);
 			System.out.printf("mov %s, %d\n", reg, temp.intMax);
 			System.out.printf("sub %s, %s\n", reg, reg2);
 			System.out.printf("imul %s, 4\n", reg);
 			
-			
 			free_register(reg2);
-			if(offset > 0) {
+			
+			if(globalVar) {
 				reg2 = get_free_register();
-				System.out.printf("mov %s, %d\n", reg2, offset);
-				System.out.printf("add %s, %%ebp\n", reg2);
+				System.out.printf("add %s, %d\n", reg, offset);
+				System.out.printf("mov %s, offset flat:.__main_ebp\n", reg2);
 				System.out.printf("mov %s, dword ptr [%s]\n", reg2, reg2);
 				System.out.printf("add %s, %s\n", reg, reg2);
 				free_register(reg2);
 			} else {
-				System.out.printf("add %s, %d\n", reg, offset);
-				System.out.printf("add %s, %%ebp\n", reg);
+
+				if(offset > 0) {
+					reg2 = get_free_register();
+					System.out.printf("mov %s, %d\n", reg2, offset);
+					System.out.printf("add %s, %%ebp\n", reg2);
+					System.out.printf("mov %s, dword ptr [%s]\n", reg2, reg2);
+					System.out.printf("add %s, %s\n", reg, reg2);
+					free_register(reg2);
+				} else {
+					System.out.printf("add %s, %d\n", reg, offset);
+					System.out.printf("add %s, %%ebp\n", reg);
+				}
+				
 			}
 			
 		} else {
@@ -249,6 +288,8 @@ public class CodeGenVisitor implements ASTVisitor {
 				System.out.printf("mov %s, dword ptr [%s]\n", reg, reg);
 			}
 		}
+		
+		globalVar = false;
 		
 		
 		
@@ -267,6 +308,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		
 		free_register(reg);
 		free_register(reg2);
+		
 		return null;
 	}
 
@@ -423,6 +465,8 @@ public class CodeGenVisitor implements ASTVisitor {
 		System.out.println("#DO THE OTHER STUFF");
 		
 		n.getChild(0).accept(this);
+		int num = n.getChild(0).getChild(0).getChildren().size() * 4;
+		System.out.printf("add %%esp, %d\n", num);
 		
 		System.out.println("#RESTORE THOSE REGISTERS");
 		System.out.println("pop %edi");
@@ -576,7 +620,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		String reg2 = (String)n.getRightOperand().accept(this);
 		System.out.println("#MOD");
 		System.out.printf("mov %%eax, %s\n", reg);
-		System.out.print("cdq\n");
+		System.out.println("cdq");
 		System.out.printf("idiv %s\n", reg2);
 		System.out.printf("mov %s, %%edx\n", reg);
 		
@@ -742,6 +786,8 @@ public class CodeGenVisitor implements ASTVisitor {
 		
 		n.getChild(0).accept(this);
 		System.out.printf("add %%esp, %d\n", ((n.getChild(0).getChild(0).getChildren().size())*4));
+		int num = n.getChild(0).getChild(0).getChildren().size() * 4;
+		System.out.printf("add %%esp, %d\n", num);
 		
 		System.out.println("#RESTORE THOSE REGISTERS");
 		System.out.println("pop %edi");
@@ -816,14 +862,16 @@ public class CodeGenVisitor implements ASTVisitor {
 				"main:\n" + 
 				"push %ebp\n" + 
 				"mov %ebp, %esp\n" + 
-				"sub %esp, " + (stackSpace) + "\n");
+				"sub %esp, " + (stackSpace) + "\n" +
+				"mov %ebx, offset flat:.__main_ebp\n" + 
+				"mov dword ptr [%ebx], %ebp\n");
 
 		n.getChild(2).accept(this);
 		n.getChild(3).accept(this);
 		System.out.println("leave\nret\n");
 		n.getChild(5).accept(this);
 		
-		System.out.println(".comm __main_ebp,4,4");
+		System.out.println(".comm .__main_ebp,4,4");
 		return null;
 	}
 
@@ -846,17 +894,40 @@ public class CodeGenVisitor implements ASTVisitor {
 		
 		//Alter offset for array indexing
 		if(n.getChild(0) instanceof ArrayReferenceNode) {
-			int val;
+			int val = 0;
 			if(n.getChild(0).getChild(0) instanceof IntegerConstNode){
 				val = ((IntegerConstNode)n.getChild(0).getChild(0)).getValue();
+			} else if(n.getChild(0).getChild(0) instanceof ScalarReferenceNode) {
+				
+				String reg2 = (String)n.getChild(0).getChild(0).accept(this);
+				System.out.printf("mov %s, %d\n", reg, temp.intMax);
+				System.out.printf("sub %s, %s\n", reg, reg2);
+				System.out.printf("imul %s, 4\n", reg);
+				
+				free_register(reg2);
+				System.out.printf("add %s, %d\n", reg, offset);
+				if(globalVar) {
+					reg2 = get_free_register();
+					System.out.printf("mov %s, offset flat:.__main_ebp\n", reg2);
+					System.out.printf("mov %s, dword ptr [%s]\n", reg2, reg2);
+					System.out.printf("add %s, %s\n", reg, reg2);
+					free_register(reg2);
+				} else {
+					System.out.printf("add %s, %%ebp\n", reg);
+				}
+				
 			} else {
 				val = ((CharacterNode)n.getChild(0).getChild(0)).getValue();
 			}
-			int arrayOffset = (temp.intMax-val)*4;
-			offset = offset-arrayOffset;
+			if(!globalVar) {
+				int arrayOffset = (temp.intMax-val)*4;
+				offset = offset-arrayOffset;
+			}
 		}
-		System.out.printf("mov %s, %d\n", reg, offset);
-		System.out.printf("add %s, %%ebp\n", reg);
+		if(!globalVar) {
+			System.out.printf("mov %s, %d\n", reg, offset);
+			System.out.printf("add %s, %%ebp\n", reg);
+		}
 		System.out.printf("push %s\n", reg);
 		
 		if(n.getChild(0).getConvertedType() == 3){
@@ -870,7 +941,7 @@ public class CodeGenVisitor implements ASTVisitor {
 		
 		System.out.println("call scanf\n" +
 							"add %esp,8");
-		
+		globalVar = false;
 		return null;
 	}
 
@@ -908,7 +979,10 @@ public class CodeGenVisitor implements ASTVisitor {
 	public Object visit(ReturnStatementNode n) {
 		String reg = (String)n.getChild(0).accept(this);
 		System.out.printf("mov %%eax, %s\n", reg);
+		System.out.println("leave");
+		System.out.println("ret");
 		free_register(reg);
+		
 		return null;
 	}
 

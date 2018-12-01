@@ -21,6 +21,8 @@ main:
 push %ebp
 mov %ebp, %esp
 sub %esp, 72
+mov %ebx, offset flat:.__main_ebp
+mov dword ptr [%ebx], %ebp
 
 #ASSIGNMENT
 mov %ebx, -20
@@ -91,6 +93,7 @@ mov %ebx, -12
 add %ebx, %ebp
 push %ebx
 call b4
+add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -126,6 +129,7 @@ mov %ebx, -20
 add %ebx, %ebp
 push %ebx
 call d1
+add %esp, 4
 add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
@@ -193,6 +197,7 @@ add %ecx, %ebp
 mov dword ptr [%ecx], %ebx
 push %ecx
 call b4
+add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -207,6 +212,7 @@ add %ecx, %ebp
 mov dword ptr [%ecx], %ebx
 push %ecx
 call b4
+add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -269,6 +275,8 @@ mov %ecx, 1
 #ADD STATEMENT
 add %ebx, %ecx
 mov %eax, %ebx
+leave
+ret
 
 leave
 ret
@@ -532,6 +540,7 @@ mov %ebx, dword ptr [%ebx]
 push %ebx
 call d2
 add %esp, 8
+add %esp, 8
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -623,6 +632,7 @@ mov %ebx, dword ptr [%ebx]
 push %ebx
 call d3
 add %esp, 16
+add %esp, 16
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -707,6 +717,7 @@ mov %ebx, -4
 add %ebx, %ebp
 push %ebx
 call d3
+add %esp, 16
 add %esp, 16
 #RESTORE THOSE REGISTERS
 pop %edi
@@ -769,3 +780,4 @@ pop %ebx
 leave
 ret
 
+.comm .__main_ebp,4,4

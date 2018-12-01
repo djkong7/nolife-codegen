@@ -23,6 +23,8 @@ main:
 push %ebp
 mov %ebp, %esp
 sub %esp, 40
+mov %ebx, offset flat:.__main_ebp
+mov dword ptr [%ebx], %ebp
 
 #SAVE THOSE REGISTERS
 push %ebx
@@ -98,6 +100,7 @@ mov %ebx, -4
 add %ebx, %ebp
 push %ebx
 call swap
+add %esp, 8
 add %esp, 8
 #RESTORE THOSE REGISTERS
 pop %edi
@@ -231,3 +234,4 @@ pop %ebx
 leave
 ret
 
+.comm .__main_ebp,4,4

@@ -59,7 +59,7 @@ public abstract class Frontend {
 		
 		PrintASTVisitor print = new PrintASTVisitor();
 		ast.getRoot().accept(print);
-		System.out.println(print.getSrc());
+		//System.out.println(print.getSrc());
 
 		ast.typeCheck();
 		

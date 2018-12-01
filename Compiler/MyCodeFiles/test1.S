@@ -21,6 +21,8 @@ main:
 push %ebp
 mov %ebp, %esp
 sub %esp, 36
+mov %ebx, offset flat:.__main_ebp
+mov dword ptr [%ebx], %ebp
 
 #ASSIGNMENT
 mov %ebx, -4
@@ -36,6 +38,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call f
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -84,7 +87,10 @@ sub %esp, 32
 
 mov %ebx, 1
 mov %eax, %ebx
+leave
+ret
 
 leave
 ret
 
+.comm .__main_ebp,4,4

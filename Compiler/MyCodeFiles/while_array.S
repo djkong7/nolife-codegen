@@ -21,6 +21,8 @@ main:
 push %ebp
 mov %ebp, %esp
 sub %esp, 76
+mov %ebx, offset flat:.__main_ebp
+mov dword ptr [%ebx], %ebp
 
 #ASSIGNMENT
 mov %ebx, -4
@@ -189,3 +191,4 @@ false1:
 leave
 ret
 
+.comm .__main_ebp,4,4

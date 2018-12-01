@@ -388,6 +388,27 @@ Instruction Pointer: 0x73:0x080485c2
 Operand Pointer:     0x7b:0xbfffef24
 Opcode:              0x0000
 (gdb) info reg
+eax            0x3  3
+ecx            0x40800000 1082130432
+edx            0xbfffefe4 -1073745948
+ebx            0xbfffefa8 -1073746008
+esp            0xbfffef28 0xbfffef28
+ebp            0xbfffef50 0xbfffef50
+esi            0x40000000 1073741824
+edi            0xb7fbb000 -1208242176
+eip            0x80485c6  0x80485c6 <continue1+75>
+eflags         0x286  [ PF SF IF ]
+cs             0x73 115
+ss             0x7b 123
+ds          
+Control Word:        0x037f   IM DM ZM OM UM PM
+                       PC: Extended Precision (64-bits)
+                       RC: Round to nearest
+Tag Word:            0x000f
+Instruction Pointer: 0x73:0x080485c2
+Operand Pointer:     0x7b:0xbfffef24
+Opcode:              0x0000
+(gdb) info reg
 eax            0x3	3
 ecx            0x40800000	1082130432
 edx            0xbfffefe4	-1073745948

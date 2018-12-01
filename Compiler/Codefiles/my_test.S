@@ -22,6 +22,8 @@ main:
 push %ebp
 mov %ebp, %esp
 sub %esp, 104
+mov %ebx, offset flat:.__main_ebp
+mov dword ptr [%ebx], %ebp
 
 #FUNCTION INVOCATION
 #SAVE THOSE REGISTERS
@@ -37,6 +39,7 @@ mov %ebx, -56
 add %ebx, %ebp
 push %ebx
 call init
+add %esp, 4
 add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
@@ -60,6 +63,7 @@ mov %ebx, -56
 add %ebx, %ebp
 push %ebx
 call writearray
+add %esp, 4
 add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
@@ -142,6 +146,7 @@ add %ebx, %ebp
 push %ebx
 call inc
 add %esp, 4
+add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -179,6 +184,7 @@ mov %ecx, -56
 add %ecx, %ebp
 push %ecx
 call writearray
+add %esp, 4
 add %esp, 4
 #RESTORE THOSE REGISTERS
 pop %edi
@@ -667,3 +673,5 @@ mov dword ptr [%ecx], %esi
 
 leave
 ret
+
+.comm .__main_ebp,4,4

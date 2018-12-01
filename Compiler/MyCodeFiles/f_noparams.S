@@ -21,6 +21,8 @@ main:
 push %ebp
 mov %ebp, %esp
 sub %esp, 112
+mov %ebx, offset flat:.__main_ebp
+mov dword ptr [%ebx], %ebp
 
 #SAVE THOSE REGISTERS
 push %ebx
@@ -39,6 +41,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b1
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -57,6 +60,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b2
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -75,6 +79,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b3
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -93,6 +98,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b4
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -153,6 +159,8 @@ pop %ebx
 
 mov %ebx, 1
 mov %eax, %ebx
+leave
+ret
 
 leave
 ret
@@ -195,6 +203,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b1
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -204,6 +213,8 @@ pop %ebx
 #DO THE OTHER STUFF
 mov %ebx, %eax
 mov %eax, %ebx
+leave
+ret
 
 leave
 ret
@@ -246,6 +257,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b1
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -264,6 +276,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b2
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -275,6 +288,8 @@ mov %ecx, %eax
 #ADD STATEMENT
 add %ebx, %ecx
 mov %eax, %ebx
+leave
+ret
 
 leave
 ret
@@ -317,6 +332,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b1
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -335,6 +351,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b2
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -353,6 +370,7 @@ push %edi
 #DO THE OTHER STUFF
 #PUSH THE PARAMS
 call b3
+add %esp, 0
 #RESTORE THOSE REGISTERS
 pop %edi
 pop %esi
@@ -366,7 +384,10 @@ add %ecx, %esi
 #ADD STATEMENT
 add %ebx, %ecx
 mov %eax, %ebx
+leave
+ret
 
 leave
 ret
 
+.comm .__main_ebp,4,4
