@@ -1,7 +1,5 @@
 .intel_syntax
 .section .rodata
-.__str0: .string "input j"
-.__str1: .string "input i"
 .int_format:
 	.string "%d\12\0"
 .str_format:
@@ -26,26 +24,6 @@ sub %esp, 40
 mov %ebx, offset flat:.__main_ebp
 mov dword ptr [%ebx], %ebp
 
-#SAVE THOSE REGISTERS
-push %ebx
-push %ecx
-push %edx
-push %esi
-push %edi
-#DO THE OTHER STUFF
-push offset flat:.__str1
-#WRITE STATEMENT
-push offset flat:.str_format
-call printf
-add %esp,8
-#RESTORE THOSE REGISTERS
-pop %edi
-pop %esi
-pop %edx
-pop %ecx
-pop %ebx
-#DO THE OTHER STUFF
-
 #READ STATEMENT
 mov %ebx, -4
 add %ebx, %ebp
@@ -53,26 +31,6 @@ push %ebx
 push offset flat:.int_in_format
 call scanf
 add %esp,8
-
-#SAVE THOSE REGISTERS
-push %ebx
-push %ecx
-push %edx
-push %esi
-push %edi
-#DO THE OTHER STUFF
-push offset flat:.__str0
-#WRITE STATEMENT
-push offset flat:.str_format
-call printf
-add %esp,8
-#RESTORE THOSE REGISTERS
-pop %edi
-pop %esi
-pop %edx
-pop %ecx
-pop %ebx
-#DO THE OTHER STUFF
 
 #READ STATEMENT
 mov %ebx, -8

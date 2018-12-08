@@ -3,21 +3,19 @@
 PROGRAM swapper;
 VAR i,j:INTEGER;
 
-	PROCEDURE swap(x,y:INTEGER);
-	VAR temp:INTEGER;
-	
-	BEGIN
-	        temp:=x;
-	        x:=y;
-	        y:=temp;
-	        WRITE(y);
-	        WRITE(x)
-	END;
+PROCEDURE swap(x,y:INTEGER);
+VAR temp:INTEGER;
 
 BEGIN
-		WRITE('input i');
+        temp:=x;
+        x:=y;
+        y:=temp;
+        WRITE(y);
+        WRITE(x)
+END;
+
+BEGIN
         READ(i);
-        WRITE('input j');
         READ(j);
         swap(i,j);
         WRITE(i)

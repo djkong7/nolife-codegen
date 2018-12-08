@@ -6,12 +6,12 @@ nonrecursive, as well as parameter passing.
 *********************************************************}
 
 PROGRAM subprog;
-	VAR x:INTEGER;
+ VAR x:INTEGER;
 
-	FUNCTION f : INTEGER;
-	BEGIN
-		RETURN 1
-	END;
+FUNCTION f : INTEGER;
+BEGIN
+	RETURN 1
+END;
 
 {*main*}
 BEGIN

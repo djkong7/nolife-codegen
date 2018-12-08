@@ -2,6 +2,7 @@ package frontend;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.Map;
 
 import frontend.ast.*;
 import frontend.utils.VariableMeta;
@@ -65,7 +66,18 @@ public abstract class Frontend {
 		
 		StackAllocationVisitor alloc = new StackAllocationVisitor();
 		HashMap<String,HashMap<String, VariableMeta>> tables = (HashMap<String, HashMap<String, VariableMeta>>) ast.getRoot().accept(alloc);
-
+	
+		System.err.println("MEMORY MAP:");
+		for(Map.Entry<String, HashMap<String, VariableMeta>> entry : tables.entrySet()) {
+			System.err.println(entry.getKey() + ":");
+			for(Map.Entry<String, VariableMeta> var : entry.getValue().entrySet()) {
+				VariableMeta info = var.getValue();
+				System.err.println("\tName: " + var.getKey() + ", Offset: " + info.offset);
+			}
+		}
+		System.err.println("");
+		
+		
 		CodeGenVisitor gen = new CodeGenVisitor(tables);
 		ast.getRoot().accept(gen);
 		
